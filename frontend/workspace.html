@@ -78,6 +78,45 @@
         </main>
     </div>
 
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Unggah (Pilihan Jenis Artefak) Baru</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="artifactText">File</label>
+                <div class="file-drop-area">
+                    <div class="file-drop-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud">
+                            <path d="M16 16.5l-4-4-4 4"></path>
+                            <path d="M12 12.5v9"></path>
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                            <path d="M16 16.5l-4-4-4 4"></path>
+                        </svg>
+                    </div>
+                    Letakkan file di sini atau <a href="#" class="file-select-link">klik di sini untuk memilih</a>
+                    <input type="file" class="file-input" style="display: none;">
+                </div>
+
+                <p class="helper-text error-text">Format file (Pilihan Jenis Artefak) yang diterima : (Format File Pilihan Jenis Artefak)</p>
+                <p class="helper-text">Nama File : (Otomatis terisi nama file) atau bisa di edit</p>
+
+                <hr class="separator">
+
+                <label for="artifactText">Teks</label>
+                <textarea id="artifactText" rows="6" placeholder="Ketik atau tempel teks"></textarea>
+                
+                <div class="artifact-name-display">
+                    Nama Artefak : <span id="artifactNamePreview">Contoh_Nama.txt</span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="upload-btn">Unggah Artefak</button>
+            </div>
+        </div>
+    </div>
     <script src="js/workspace.js"></script>
 </body>
 </html>
