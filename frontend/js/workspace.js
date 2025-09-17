@@ -47,6 +47,7 @@ function getIconForType(type) {
 // Fungsi untuk merender artefak
 function renderArtifacts() {
     const grid = document.getElementById('artifacts-grid');
+    if (!grid) return; // Pengaman jika elemen tidak ditemukan
     grid.innerHTML = '';
 
     artifactsData.forEach((artifact, index) => {
@@ -73,6 +74,7 @@ function renderArtifacts() {
 // Fungsi untuk merender riwayat
 function renderHistory() {
     const list = document.getElementById('history-list');
+    if (!list) return; // Pengaman jika elemen tidak ditemukan
     list.innerHTML = '';
 
     historyData.forEach(item => {
@@ -87,68 +89,79 @@ function renderHistory() {
 
 // Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (kode yang sudah ada sebelumnya) ...
+    // 1. Tampilkan data dummy saat halaman dimuat
+    renderArtifacts();
+    renderHistory();
 
-    // === LOGIKA MODAL (VERSI BARU) ===
+    // 2. Logika untuk tombol "Pilih Artefak"
+    const selectBtn = document.querySelector('.select-btn');
+    if(selectBtn) {
+        selectBtn.addEventListener('click', () => {
+            selectingArtifacts = !selectingArtifacts;
+            renderArtifacts();
+        });
+    }
 
-    // 1. Ambil elemen-elemen yang dibutuhkan
+    // 3. === LOGIKA MODAL (POP-UP) ===
     const modal = document.getElementById('uploadModal');
     const closeModalBtn = document.querySelector('.close-btn');
     const uploadButtons = document.querySelectorAll('.upload-section button');
     const modalTitle = document.getElementById('modalTitle');
-    
-    // Elemen baru di modal
     const fileDropArea = document.querySelector('.file-drop-area');
     const fileInput = document.querySelector('.file-input');
-    const artifactNamePreview = document.getElementById('artifactNamePreview'); // Diperbarui
+    const artifactNamePreview = document.getElementById('artifactNamePreview');
     const fileSelectLink = document.querySelector('.file-select-link');
 
-    // 2. Fungsi untuk menampilkan modal
-    function openModal(event) {
-        // Judul modal sekarang statis sesuai desain baru
-        modalTitle.textContent = 'Unggah (Pilihan Jenis Artefak) Baru';
-        modal.style.display = 'flex';
-    }
-
-    // 3. Fungsi untuk menyembunyikan modal
-    function closeModal() {
-        modal.style.display = 'none';
-        // Reset nama file saat modal ditutup
-        artifactNamePreview.textContent = 'Contoh_Nama.txt';
-        fileInput.value = ''; // Kosongkan input file
-    }
-
-    // 4. Tambahkan event listener ke setiap tombol unggah
-    uploadButtons.forEach(button => {
-        button.addEventListener('click', openModal);
-    });
-
-    // 5. Tambahkan event listener ke tombol close (X)
-    closeModalBtn.addEventListener('click', closeModal);
-
-    // 6. Tutup modal jika user mengklik di luar area konten
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            closeModal();
+    // Pastikan semua elemen modal ada sebelum menambahkan event listener
+    if (modal && closeModalBtn && uploadButtons.length > 0) {
+        
+        function openModal(event) {
+            if (modalTitle) {
+                modalTitle.textContent = 'Unggah (Pilihan Jenis Artefak) Baru';
+            }
+            modal.style.display = 'flex';
         }
-    });
 
-    // 7. Fungsionalitas Area Unggah File
-    fileDropArea.addEventListener('click', () => {
-        fileInput.click();
-    });
-    // Juga buat link di dalamnya bisa diklik
-    fileSelectLink.addEventListener('click', (e) => {
-        e.preventDefault(); // Mencegah link pindah halaman
-        fileInput.click();
-    });
-
-    // 8. Saat file sudah dipilih, perbarui teks nama artefak
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            const fileName = fileInput.files[0].name;
-            // Perbarui teks di dalam <span>
-            artifactNamePreview.textContent = fileName;
+        function closeModal() {
+            modal.style.display = 'none';
+            if (artifactNamePreview) {
+                artifactNamePreview.textContent = 'Contoh_Nama.txt';
+            }
+            if (fileInput) {
+                fileInput.value = '';
+            }
         }
-    });
+
+        uploadButtons.forEach(button => {
+            button.addEventListener('click', openModal);
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        if (fileDropArea && fileInput) {
+            fileDropArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0 && artifactNamePreview) {
+                    const fileName = fileInput.files[0].name;
+                    artifactNamePreview.textContent = fileName;
+                }
+            });
+        }
+        
+        if (fileSelectLink) {
+            fileSelectLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(fileInput) fileInput.click();
+            });
+        }
+    }
 });
