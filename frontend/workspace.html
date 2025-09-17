@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace 1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Workspace 1</h1>
+            <div class="user-profile">
+                <div class="icon"></div>
+                <span>Username</span>
+            </div>
+        </header>
+
+        <section class="greeting">
+            Selamat datang kembali! Lanjutkan analisis konsistensi desain Anda!
+        </section>
+
+        <main class="main-content">
+            <section class="panel project-artifacts-section">
+                <div class="panel-title">
+                    <h2>Gudang Artefak Proyek</h2>
+                    <div class="info">
+                        <span>Artefak: 14</span>
+                        <span>Aktivitas Terakhir: 27 Sep 2025 - 10:19</span>
+                    </div>
+                </div>
+                <div class="artifacts-grid" id="artifacts-grid">
+                    </div>
+            </section>
+            
+            <div class="side-by-side-panels">
+                <section class="panel history-section">
+                    <div class="panel-title">
+                        <h2>Histori</h2>
+                    </div>
+                    <ul class="history-list" id="history-list">
+                        </ul>
+                </section>
+                
+                <section class="panel upload-section">
+                    <div class="panel-title">
+                        <h2>Unggah Artefak Baru</h2>
+                    </div>
+                    <div class="buttons-grid">
+                        <button>SQL</button>
+                        <button>BPMN</button>
+                        <button>Sequence Diagram</button>
+                        <button>Use Case Specification</button>
+                        <button>Use Case Diagram</button>
+                        <button>Class Diagram</button>
+                        <button>Activity Diagram</button>
+                        <button>Wireframe</button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel analysis-panel">
+                <div class="panel-title">
+                    <h2>Hasil Analisis Konsistensi</h2>
+                </div>
+                <div class="placeholder-content">
+                    <div class="icon-placeholder">&#128196;</div>
+                    <p>Area ini akan menampilkan hasil perbandingan.</p>
+                    <p>Gunakan panel dibawah untuk memilih artefak yang ingin dianalisis.</p>
+                </div>
+            </section>
+            
+            <div class="action-buttons">
+                <button class="select-btn">Pilih Artefak</button>
+                <button class="compare-btn">Bandingkan</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+/* Import font dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Warna Kustom */
+:root {
+    --primary-color: #454384;
+    --secondary-color: #D1CFFF;
+    --panel-bg-color: #918FD8;
+    --white: #ffffff;
+    --dark-text: #302E5A;
+}
+
+/* Style dasar untuk body dan container */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    color: var(--primary-color);
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 24px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #4b4b4b;
+}
+
+.user-profile .icon {
+    width: 32px;
+    height: 32px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+}
+
+.user-profile span {
+    font-weight: 500;
+}
+
+/* Greeting Section */
+.greeting {
+    background-color: var(--secondary-color);
+    color: var(--dark-text);
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 16px;
+}
+
+/* Main Content Layout (Flexbox Column) */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Panel Sections */
+.panel {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    background-color: #f7f9fc;
+}
+
+.panel-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.panel-title h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.panel-title .info {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Gudang Artefak Panel */
+.project-artifacts-section {
+    background-color: var(--white);
+}
+
+.project-artifacts-section .panel-title h2 {
+    color: var(--primary-color);
+}
+
+.project-artifacts-section .panel-title .info {
+    color: #666;
+}
+
+.artifacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+    /* Menghilangkan scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge */
+}
+
+/* Menghilangkan scrollbar untuk Chrome, Safari, dan Opera */
+.artifacts-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.artifact-card {
+    background-color: var(--secondary-color);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: var(--dark-text);
+}
+
+.artifact-card:hover {
+    transform: translateY(-5px);
+}
+
+.artifact-card .icon-placeholder {
+    font-size: 40px;
+    margin-bottom: 8px;
+    color: var(--dark-text);
+}
+
+.artifact-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+    /* Mengatur teks agar tidak keluar container */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.artifact-card .date {
+    font-size: 12px;
+    color: var(--dark-text);
+    margin-top: 4px;
+}
+
+/* Container untuk History dan Upload berdampingan */
+.side-by-side-panels {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.history-section, .upload-section {
+    flex: 1;
+}
+
+/* History List (scrollable) */
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    /* Menghilangkan scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge */
+}
+
+.history-list::-webkit-scrollbar {
+    display: none;
+}
+
+.history-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    color: #666;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
+}
+
+/* Upload Buttons Panel */
+.upload-section {
+    background-color: var(--white);
+}
+
+.upload-section .panel-title h2 {
+    color: var(--primary-color);
+}
+
+.upload-section .buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.upload-section button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark-text);
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-section button:hover {
+    background-color: #c0bfe0;
+}
+
+/* Analysis Panel */
+.analysis-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 400px;
+}
+
+.analysis-panel .placeholder-content {
+    margin: 20px 0;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Kontainer terpisah untuk tombol */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: -24px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.action-buttons button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.action-buttons .select-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.action-buttons .compare-btn {
+    background-color: var(--secondary-color);
+    color: var(--dark-text);
+    border: 1px solid #ccc;
+}
