@@ -25,16 +25,10 @@ const historyData = [
     { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
     { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
     { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
 ];
+
+// State: apakah sedang memilih artefak
+let selectingArtifacts = false;
 
 // Fungsi untuk mendapatkan ikon berdasarkan tipe file
 function getIconForType(type) {
@@ -42,9 +36,9 @@ function getIconForType(type) {
         case 'xml':
             return '&lt;/&gt;';
         case 'txt':
-            return '📄'; // Emoji kertas
+            return '📄';
         case 'sql':
-            return '🗄️'; // Emoji lemari arsip
+            return '🗄️';
         default:
             return '';
     }
@@ -53,13 +47,20 @@ function getIconForType(type) {
 // Fungsi untuk merender artefak
 function renderArtifacts() {
     const grid = document.getElementById('artifacts-grid');
-    grid.innerHTML = ''; // Clear existing content
+    grid.innerHTML = '';
 
-    artifactsData.forEach(artifact => {
+    artifactsData.forEach((artifact, index) => {
         const card = document.createElement('div');
         card.className = 'artifact-card';
         const icon = getIconForType(artifact.type);
+
+        // Checkbox kiri atas
+        const checkbox = selectingArtifacts
+            ? `<input type="checkbox" class="artifact-checkbox" data-index="${index}">`
+            : '';
+
         card.innerHTML = `
+            ${checkbox}
             <div class="icon-placeholder">${icon}</div>
             <p>${artifact.name}</p>
             <p class="date">${artifact.date}</p>
@@ -68,10 +69,11 @@ function renderArtifacts() {
     });
 }
 
+
 // Fungsi untuk merender riwayat
 function renderHistory() {
     const list = document.getElementById('history-list');
-    list.innerHTML = ''; // Clear existing content
+    list.innerHTML = '';
 
     historyData.forEach(item => {
         const listItem = document.createElement('li');
@@ -83,8 +85,14 @@ function renderHistory() {
     });
 }
 
-// Panggil fungsi render saat halaman dimuat
+// Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', () => {
     renderArtifacts();
     renderHistory();
+
+    // Event tombol "Pilih Artefak" → toggle checkbox
+    document.querySelector('.select-btn').addEventListener('click', () => {
+        selectingArtifacts = !selectingArtifacts;
+        renderArtifacts();
+    });
 });
