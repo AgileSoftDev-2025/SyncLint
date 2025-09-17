@@ -15,11 +15,20 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    /* Hapus atau ubah justify-content menjadi flex-start */
+    justify-content: flex-start; 
     height: 100vh;
     position: fixed;
     overflow-y: hidden;
     left: 0;
+}
+
+.bottom-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: auto; /* <-- TAMBAHKAN BARIS INI */
 }
 
 .main-content {
