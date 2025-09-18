@@ -1,167 +1,190 @@
-// Data dummy untuk artefak proyek
-const artifactsData = [
-    { name: 'ERD_Akademik.xml', date: '15/11/2025', type: 'xml' },
-    { name: 'Use_Case_Pendaftaran_Login.txt', date: '15/11/2025', type: 'txt' },
-    { name: 'Skema_DB_Pengguna.sql', date: '15/11/2025', type: 'sql' },
-    { name: 'Konfigurasi_Aplikasi.xml', date: '16/11/2025', type: 'xml' },
-    { name: 'Log_Server_20251116.txt', date: '16/11/2025', type: 'txt' },
-    { name: 'Tabel_Produk.sql', date: '17/11/2025', type: 'sql' },
-    { name: 'Antarmuka_API.xml', date: '17/11/2025', type: 'xml' },
-    { name: 'Deskripsi_Skenario.txt', date: '18/11/2025', type: 'txt' },
-    { name: 'Query_Analisis_Penjualan.sql', date: '18/11/2025', type: 'sql' },
-    { name: 'Sitemap_Website.xml', date: '19/11/2025', type: 'xml' },
-    { name: 'Dokumen_Persyaratan.txt', date: '19/11/2025', type: 'txt' },
-    { name: 'Script_Migrasi_V3.sql', date: '20/11/2025', type: 'sql' },
-    { name: 'Data_Pelanggan.xml', date: '20/11/2025', type: 'xml' },
-    { name: 'Catatan_Meeting.txt', date: '21/11/2025', type: 'txt' },
-    { name: 'Backup_DB_Utama.sql', date: '21/11/2025', type: 'sql' },
-    { name: 'Konfigurasi_Lokal.xml', date: '22/11/2025', type: 'xml' },
-    { name: 'Feedback_Pengguna.txt', date: '22/11/2025', type: 'txt' },
-    { name: 'Stored_Procedure.sql', date: '23/11/2025', type: 'sql' },
-];
+// Menunggu hingga seluruh konten halaman siap sebelum menjalankan skrip.
+document.addEventListener("DOMContentLoaded", () => {
 
-// Data dummy untuk riwayat
-const historyData = [
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-];
+    // =============================================
+    // ================ STATE & DATA ===============
+    // =============================================
+    
+    // State untuk mengontrol mode seleksi artefak
+    let isSelectingArtifacts = false;
 
-// State: apakah sedang memilih artefak
-let selectingArtifacts = false;
+    // Data dummy untuk artefak proyek (nantinya akan diganti data dari API)
+    const artifactsData = [
+        { name: 'ERD_Akademik.xml', date: '15/11/2025', type: 'xml' },
+        { name: 'Use_Case_Pendaftaran_Login.txt', date: '15/11/2025', type: 'txt' },
+        { name: 'Skema_DB_Pengguna.sql', date: '15/11/2025', type: 'sql' },
+        { name: 'Konfigurasi_Aplikasi.xml', date: '16/11/2025', type: 'xml' },
+        { name: 'Log_Server_20251116.txt', date: '16/11/2025', type: 'txt' },
+        { name: 'Tabel_Produk.sql', date: '17/11/2025', type: 'sql' }
+        // ...dan seterusnya
+    ];
 
-// Fungsi untuk mendapatkan ikon berdasarkan tipe file
-function getIconForType(type) {
-    switch (type) {
-        case 'xml':
-            return '&lt;/&gt;';
-        case 'txt':
-            return '📄';
-        case 'sql':
-            return '🗄️';
-        default:
-            return '';
-    }
-}
+    // Data dummy untuk riwayat (nantinya akan diganti data dari API)
+    const historyData = [
+        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
+        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
+        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
+    ];
 
-// Fungsi untuk merender artefak
-function renderArtifacts() {
-    const grid = document.getElementById('artifacts-grid');
-    if (!grid) return; // Pengaman jika elemen tidak ditemukan
-    grid.innerHTML = '';
-
-    artifactsData.forEach((artifact, index) => {
-        const card = document.createElement('div');
-        card.className = 'artifact-card';
-        const icon = getIconForType(artifact.type);
-
-        // Checkbox kiri atas
-        const checkbox = selectingArtifacts
-            ? `<input type="checkbox" class="artifact-checkbox" data-index="${index}">`
-            : '';
-
-        card.innerHTML = `
-            ${checkbox}
-            <div class="icon-placeholder">${icon}</div>
-            <p>${artifact.name}</p>
-            <p class="date">${artifact.date}</p>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-
-// Fungsi untuk merender riwayat
-function renderHistory() {
-    const list = document.getElementById('history-list');
-    if (!list) return; // Pengaman jika elemen tidak ditemukan
-    list.innerHTML = '';
-
-    historyData.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <span>${item.text}</span>
-            <span>${item.date}</span>
-        `;
-        list.appendChild(listItem);
-    });
-}
-
-// Jalankan saat halaman siap
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Tampilkan data dummy saat halaman dimuat
-    renderArtifacts();
-    renderHistory();
-
-    // 2. Logika untuk tombol "Pilih Artefak"
+    // =============================================
+    // ===== INISIALISASI & SELEKSI ELEMEN DOM =====
+    // =============================================
+    
+    // Panel Utama
+    const artifactsGrid = document.getElementById('artifacts-grid');
+    const historyList = document.getElementById('history-list');
+    
+    // Tombol Aksi
     const selectBtn = document.querySelector('.select-btn');
-    if(selectBtn) {
-        selectBtn.addEventListener('click', () => {
-            selectingArtifacts = !selectingArtifacts;
-            renderArtifacts();
-        });
-    }
+    const compareBtn = document.querySelector('.compare-btn');
 
-    // 3. === LOGIKA MODAL (POP-UP) ===
+    // Elemen Modal
     const modal = document.getElementById('uploadModal');
-    const closeModalBtn = document.querySelector('.close-btn');
+    const closeModalBtn = modal.querySelector('.close-btn');
     const uploadButtons = document.querySelectorAll('.upload-section button');
-    const modalTitle = document.getElementById('modalTitle');
-    const fileDropArea = document.querySelector('.file-drop-area');
-    const fileInput = document.querySelector('.file-input');
-    const artifactNamePreview = document.getElementById('artifactNamePreview');
-    const fileSelectLink = document.querySelector('.file-select-link');
+    const fileDropArea = modal.querySelector('.file-drop-area');
+    const fileInput = modal.querySelector('.file-input');
+    const artifactNamePreview = modal.querySelector('#artifactNamePreview');
 
-    // Pastikan semua elemen modal ada sebelum menambahkan event listener
-    if (modal && closeModalBtn && uploadButtons.length > 0) {
-        
-        function openModal(event) {
-            if (modalTitle) {
-                modalTitle.textContent = 'Unggah (Pilihan Jenis Artefak) Baru';
-            }
-            modal.style.display = 'flex';
-        }
+    // =============================================
+    // =============== EVENT LISTENERS ===============
+    // =============================================
+    
+    if (selectBtn) {
+        selectBtn.addEventListener('click', toggleArtifactSelection);
+    }
+    
+    // Pasang listener untuk semua tombol "Unggah"
+    uploadButtons.forEach(button => {
+        button.addEventListener('click', openUploadModal);
+    });
 
-        function closeModal() {
-            modal.style.display = 'none';
-            if (artifactNamePreview) {
-                artifactNamePreview.textContent = 'Contoh_Nama.txt';
-            }
-            if (fileInput) {
-                fileInput.value = '';
-            }
-        }
-
-        uploadButtons.forEach(button => {
-            button.addEventListener('click', openModal);
-        });
-
-        closeModalBtn.addEventListener('click', closeModal);
-
+    // Event listener untuk elemen di dalam modal
+    if (modal) {
+        closeModalBtn.addEventListener('click', closeUploadModal);
         window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                closeModal();
-            }
+            if (event.target === modal) closeUploadModal();
         });
-
-        if (fileDropArea && fileInput) {
-            fileDropArea.addEventListener('click', () => {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', () => {
-                if (fileInput.files.length > 0 && artifactNamePreview) {
-                    const fileName = fileInput.files[0].name;
-                    artifactNamePreview.textContent = fileName;
-                }
-            });
-        }
         
-        if (fileSelectLink) {
-            fileSelectLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                if(fileInput) fileInput.click();
-            });
+        // Fungsionalitas drag-and-drop dan pilih file
+        fileDropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Mencegah perilaku default browser saat file di-drag ke area drop
+        fileDropArea.addEventListener('dragover', (e) => e.preventDefault());
+        fileDropArea.addEventListener('drop', handleFileDrop);
+    }
+
+    // =============================================
+    // ================== FUNGSI ===================
+    // =============================================
+    
+    /**
+     * Mengaktifkan atau menonaktifkan mode seleksi artefak.
+     */
+    function toggleArtifactSelection() {
+        isSelectingArtifacts = !isSelectingArtifacts;
+        renderArtifacts(); // Render ulang artefak untuk menampilkan/menyembunyikan checkbox
+    }
+
+    /**
+     * Menampilkan daftar artefak di UI.
+     */
+    function renderArtifacts() {
+        if (!artifactsGrid) return;
+        artifactsGrid.innerHTML = ''; // Kosongkan grid sebelum mengisi ulang
+
+        artifactsData.forEach((artifact, index) => {
+            const card = document.createElement('div');
+            card.className = 'artifact-card';
+            const icon = getIconForType(artifact.type);
+            const checkboxHTML = isSelectingArtifacts ? `<input type="checkbox" class="artifact-checkbox" data-index="${index}">` : '';
+
+            card.innerHTML = `
+                ${checkboxHTML}
+                <div class="icon-placeholder">${icon}</div>
+                <p>${artifact.name}</p>
+                <p class="date">${artifact.date}</p>
+            `;
+            artifactsGrid.appendChild(card);
+        });
+    }
+
+    /**
+     * Menampilkan daftar riwayat perbandingan di UI.
+     */
+    function renderHistory() {
+        if (!historyList) return;
+        historyList.innerHTML = '';
+
+        historyData.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<span>${item.text}</span><span>${item.date}</span>`;
+            historyList.appendChild(listItem);
+        });
+    }
+    
+    /**
+     * Membuka modal pop-up untuk mengunggah artefak.
+     */
+    function openUploadModal() {
+        modal.style.display = 'flex';
+    }
+
+    /**
+     * Menutup modal pop-up dan mereset isinya.
+     */
+    function closeUploadModal() {
+        modal.style.display = 'none';
+        artifactNamePreview.textContent = 'Contoh_Nama.txt'; // Reset nama file
+        fileInput.value = ''; // Reset input file
+    }
+    
+    /**
+     * Menangani file yang dipilih melalui dialog atau di-drop.
+     * @param {FileList} files - Daftar file dari input atau event drop.
+     */
+    function handleFile(files) {
+        if (files.length > 0) {
+            const fileName = files[0].name;
+            artifactNamePreview.textContent = fileName;
         }
     }
+
+    function handleFileSelect() {
+        handleFile(this.files);
+    }
+    
+    function handleFileDrop(e) {
+        e.preventDefault();
+        handleFile(e.dataTransfer.files);
+    }
+
+    /**
+     * Mengembalikan ikon emoji berdasarkan tipe file.
+     * @param {string} type - Ekstensi file (xml, txt, sql).
+     * @returns {string} String emoji ikon.
+     */
+    function getIconForType(type) {
+        switch (type) {
+            case 'xml': return '&lt;/&gt;';
+            case 'txt': return '📄';
+            case 'sql': return '🗄️';
+            default: return '❔';
+        }
+    }
+
+    // =============================================
+    // ===== JALANKAN FUNGSI INISIALISASI =====
+    // =============================================
+    
+    /**
+     * Menjalankan semua fungsi yang diperlukan saat halaman pertama kali dimuat.
+     */
+    function initializePage() {
+        renderArtifacts();
+        renderHistory();
+    }
+    
+    initializePage();
 });
