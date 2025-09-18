@@ -34,7 +34,7 @@ if (loginForm) {
     );
 
     // redirect ke home
-    window.location.href = "home.html";
+    window.location.href = "homepage.html";
   });
 }
 

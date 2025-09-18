@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     background-image: url('../assets/bg\ login.png');
     background-size: cover;
     background-position: center;
@@ -52,7 +52,20 @@ body {
 .logo {
     width: 30px;
     height: auto;
-    margin-right: 10px;
+    margin-right: 8px; /* Mengurangi jarak agar lebih pas */
+}
+
+.logo-container {
+    display: flex;           /* Mengaktifkan flexbox */
+    align-items: center;     /* Menengahkan secara vertikal */
+    justify-content: center; /* Menengahkan secara horizontal */
+    margin-bottom: 20px;     /* Memberi jarak ke bawah (opsional) */
+}
+
+.logo-container .logo-text {
+    font-weight: bold;       /* Membuat teks menjadi tebal (bold) */
+    font-size: 20px;         /* Mengatur ukuran font (opsional) */
+    color: #454384;          /* Memberi warna agar konsisten (opsional) */
 }
 
 .search-bar {
@@ -251,14 +264,12 @@ body {
   padding: 0; 
   margin: 0; 
 }
-#div1, #div3 {
-  width: 10px;   
-}
 
-#div5 {
-  width: 18px;  
-  display: flex;
-  justify-content: center;
+.nav-icon-container {
+    width: 20px; /* Beri lebar yang sama untuk semua wadah ikon */
+    display: flex;
+    justify-content: center;
+    margin-right: 8px; /* Beri jarak antara ikon dan teks */
 }
 
 /* user icon */
