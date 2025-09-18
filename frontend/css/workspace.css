@@ -39,7 +39,7 @@ body {
 }
 
 .header h1 {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 600;
     margin: 0;
     color: var(--primary-color);
@@ -481,4 +481,17 @@ body {
 
 .upload-btn:hover {
     background-color: #35336a;
+}
+
+/* Modal di Workspace */
+.modal-header h2 {
+    font-size: 28px; /* DITAMBAHKAN: Ukuran judul modal */
+}
+
+.modal-body label, .file-select-link {
+    font-size: 16px; /* DITAMBAHKAN: Ukuran untuk label utama */
+}
+
+.helper-text, .artifact-name-display {
+    font-size: 14px; /* DITAMBAHKAN: Ukuran untuk teks bantuan */
 }

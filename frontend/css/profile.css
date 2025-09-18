@@ -96,6 +96,7 @@ body.profile-page {
   display: block;
   margin-top: 10px;
   font-weight: 600;
+  font-size: 16px; /* DITAMBAHKAN: Ukuran nama di sidebar */
 }
 .sidebar-menu a {
   display: block;
@@ -104,6 +105,7 @@ body.profile-page {
   border-radius: 6px;
   text-decoration: none;
   color: #333;
+  font-size: 16px; /* DITAMBAHKAN: Ukuran teks menu */
 }
 .sidebar-menu a.active,
 .sidebar-menu a:hover {
@@ -121,6 +123,7 @@ body.profile-page {
 .profile-form h2 {
   margin-bottom: 20px;
   color: #2c2c54;
+  font-size: 28px; /* DITAMBAHKAN: Ukuran judul utama form */
 }
 .form-row {
   display: flex;
@@ -132,6 +135,7 @@ body.profile-page {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  font-size: 14px; /* DITAMBAHKAN: Menyamakan ukuran font input */
 }
 .btn {
   background: #5A4FCF;
@@ -140,5 +144,6 @@ body.profile-page {
   border: none;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 16px; /* DITAMBAHKAN: Menyamakan tombol update */
   cursor: pointer;
 }
