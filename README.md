@@ -57,6 +57,5 @@ Sebuah proyek untuk mata kuliah **Pembangunan Perangkat Lunak (Praktikum)** Kela
 
 ## 🏷️ Lisensi
 
-Proyek ini .
-
-Hak Cipta (c) 2025 Wisnwa
+Project ini dibuat untuk kepentingan akademik dan pembelajaran.
+Bebas digunakan dan dikembangkan kembali untuk keperluan pendidikan.
