@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace Dashboard</title>
+    <link rel="stylesheet" href="css/homepage.css">
+    <script src="js/homepage.js" defer></script>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo-container">
+        <img class="logo" src="assets/Logo.png" alt="Logo"> 
+        <span class="logo-text">SyncLint</span>
+    </div>
+    <div class="bottom-nav">
+    <div class="row">
+        <div class="nav-icon-container"></div> <div class="cell">FAQ</div>
+    </div>
+
+    <div class="row">
+        <div class="nav-icon-container"></div> <div class="cell">Pengaturan</div>
+    </div>
+
+    <div class="row">
+        <div class="nav-icon-container"> <img class="user-icon" src="https://img.icons8.com/ios/20/000000/user.png" alt="User Icon">
+        </div>
+        <a href="profile.html" class="cell" style="text-decoration: none; color: inherit;">Profil</a>
+    </div>
+</div>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <input type="text" class="search-bar" placeholder="Cari workspace...">
+        <div class="action-buttons">
+            <button class="sort-btn">Sortir Workspace</button>
+            <button class="add-btn">+ Buat Workspace</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Workspace cards -->
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 1</div>
+                <span>Dibuat: 01 Januari 2025</span><br>
+                <span>Terakhir dilihat: 10 hari yang lalu</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 2</div>
+                <span>Dibuat: 15 Januari 2025</span><br>
+                <span>Terakhir dilihat: 7 hari yang lalu</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 3</div>
+                <span>Dibuat: 01 Februari 2025</span><br>
+                <span>Terakhir dilihat: 2 hari yang lalu</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 4</div>
+                <span>Dibuat: 10 Februari 2025</span><br>
+                <span>Terakhir dilihat: 1 hari yang lalu</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 5</div>
+                <span>Dibuat: 20 Februari 2025</span><br>
+                <span>Terakhir dilihat: 5 hari yang lalu</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-top">
+                <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+            </div>
+            <div class="menu-dot">⋮</div>
+            <div class="card-bottom">
+                <div class="card-title">Workspace 6</div>
+                <span>Dibuat: 01 Maret 2025</span><br>
+                <span>Terakhir dilihat: Baru saja</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Buat Workspace -->
+<div id="workspaceModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Buat Workspace Baru</h2>
+    <input type="text" id="workspaceName" placeholder="Masukkan nama workspace">
+    <button id="createWorkspaceBtn">Buat</button>
+  </div>
+</div>
+</body>
+</html>

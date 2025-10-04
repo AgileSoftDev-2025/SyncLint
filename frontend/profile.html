@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SyncLint — Profile</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+<body class="profile-page">
+
+  <!-- Header -->
+  <header class="top-header">
+    <div class="logo-area">
+      <img src="assets/Logo.png" alt="SyncLint Logo" class="logo">
+      <span class="brand">SyncLint</span>
+    </div>
+    <div class="user-info">
+      <!-- Avatar + input file header -->
+      <img src="assets/profile.png" alt="User" class="user-avatar" id="headerPic">
+      <input type="file" id="uploadPicHeader" accept="image/*" style="display: none;">
+      
+      <!-- Nama user -->
+      <span id="userName">Dezilva Zafiazka</span>
+    </div>
+  </header>
+
+  <!-- Cover -->
+  <div class="cover">
+    <button class="btn-change-cover">Change Cover</button>
+  </div>
+
+  <!-- Profile Content -->
+  <main class="profile-container">
+    <!-- Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="avatar-box">
+        <img src="assets/profile.png" alt="User" class="user-avatar" id="sidebarPic">
+        <input type="file" id="uploadPicSidebar" accept="image/*" style="display: none;">
+        <span class="name" id="sidebarName">Dezilva Zafiazka</span>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="#" class="active">Personal Information</a>
+        <a href="home.html">Workspace</a>
+        <a href="index.html" id="logoutBtn">Log Out</a>
+      </nav>
+    </aside>
+
+    <!-- Form -->
+    <section class="profile-form">
+      <h2>Account Settings</h2>
+      <form id="profileForm">
+        <div class="form-row">
+          <input type="text" placeholder="First Name">
+          <input type="text" placeholder="Last Name">
+        </div>
+        <div class="form-row">
+          <input type="text" placeholder="Phone Number">
+          <input type="email" placeholder="Email address">
+        </div>
+        <div class="form-row">
+          <input type="text" placeholder="City">
+          <input type="text" placeholder="Country">
+        </div>
+        <div class="form-row">
+          <input type="password" placeholder="Change Password">
+          <input type="password" placeholder="Confirm Password">
+        </div>
+        <button type="submit" class="btn">Update</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/profile.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>SyncLint — Login</title>
+    <title>SyncLint — Sign Up</title>
 
     <!-- Import Google Font -->
     <link
@@ -25,12 +25,17 @@
     </header>
 
     <main class="login-container">
-      <form id="loginForm" class="login-card">
-        <h2>Log In</h2>
+      <form id="signupForm" class="login-card">
+        <h2>Sign Up</h2>
 
         <div class="input-group">
           <i class="fa fa-envelope"></i>
           <input id="email" type="email" placeholder="Email" required />
+        </div>
+
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          <input id="username" type="text" placeholder="Username" required />
         </div>
 
         <div class="input-group">
@@ -40,18 +45,25 @@
             type="password"
             placeholder="Password"
             required
+            minlength="8"
           />
         </div>
 
-        <div class="options">
-          <label><input id="remember" type="checkbox" /> Ingat Saya</label>
-          <a href="forgot.html">Lupa Password?</a>
+        <div class="input-group">
+          <i class="fa fa-lock"></i>
+          <input
+            id="confirm"
+            type="password"
+            placeholder="Konfirmasi Password"
+            required
+            minlength="8"
+          />
         </div>
 
-        <button id="loginBtn" type="submit">Login</button>
+        <button id="signupBtn" type="submit">Sign Up</button>
 
         <p class="signup">
-          Belum mempunyai akun? <a href="signup.html">Sign Up</a>
+          Sudah mempunyai akun? <a href="index.html">Log In</a>
         </p>
       </form>
     </main>

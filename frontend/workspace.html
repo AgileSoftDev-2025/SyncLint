@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace 1</title>
+    <link rel="stylesheet" href="css/workspace.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <a href="homepage.html" style="text-decoration: none; color: inherit;">
+                <h1>Workspace 1</h1>
+            </a>
+            <div class="user-profile">
+                <a href="profile.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="icon"></div>
+                    <span>Username</span>
+                </a>
+            </div>
+        </header>
+
+        <section class="greeting">
+            Selamat datang kembali! Lanjutkan analisis konsistensi desain Anda!
+        </section>
+
+        <main class="main-content">
+            <section class="panel project-artifacts-section">
+                <div class="panel-title">
+                    <h2>Gudang Artefak Proyek</h2>
+                    <div class="info">
+                        <span>Artefak: 14</span>
+                        <span>Aktivitas Terakhir: 27 Sep 2025 - 10:19</span>
+                    </div>
+                </div>
+                <div class="artifacts-grid" id="artifacts-grid">
+                    </div>
+            </section>
+            
+            <div class="side-by-side-panels">
+                <section class="panel history-section">
+                    <div class="panel-title">
+                        <h2>Histori</h2>
+                    </div>
+                    <ul class="history-list" id="history-list">
+                        </ul>
+                </section>
+                
+                <section class="panel upload-section">
+                    <div class="panel-title">
+                        <h2>Unggah Artefak Baru</h2>
+                    </div>
+                    <div class="buttons-grid">
+                        <button>SQL</button>
+                        <button>BPMN</button>
+                        <button>Sequence Diagram</button>
+                        <button>Use Case Specification</button>
+                        <button>Use Case Diagram</button>
+                        <button>Class Diagram</button>
+                        <button>Activity Diagram</button>
+                        <button>Wireframe</button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel analysis-panel">
+                <div class="panel-title">
+                    <h2>Hasil Analisis Konsistensi</h2>
+                </div>
+                <div class="placeholder-content">
+                    <div class="icon-placeholder">&#128196;</div>
+                    <p>Area ini akan menampilkan hasil perbandingan.</p>
+                    <p>Gunakan panel dibawah untuk memilih artefak yang ingin dianalisis.</p>
+                </div>
+            </section>
+            
+            <div class="action-buttons">
+                <button class="select-btn">Pilih Artefak</button>
+                <button class="compare-btn">Bandingkan</button>
+            </div>
+        </main>
+    </div>
+
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Unggah (Pilihan Jenis Artefak) Baru</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="artifactText">File</label>
+                <div class="file-drop-area">
+                    <div class="file-drop-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud">
+                            <path d="M16 16.5l-4-4-4 4"></path>
+                            <path d="M12 12.5v9"></path>
+                            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                            <path d="M16 16.5l-4-4-4 4"></path>
+                        </svg>
+                    </div>
+                    Letakkan file di sini atau <a href="#" class="file-select-link">klik di sini untuk memilih</a>
+                    <input type="file" class="file-input" style="display: none;">
+                </div>
+
+                <p class="helper-text error-text">Format file (Pilihan Jenis Artefak) yang diterima : (Format File Pilihan Jenis Artefak)</p>
+                <p class="helper-text">Nama File : (Otomatis terisi nama file) atau bisa di edit</p>
+
+                <hr class="separator">
+
+                <label for="artifactText">Teks</label>
+                <textarea id="artifactText" rows="6" placeholder="Ketik atau tempel teks"></textarea>
+                
+                <div class="artifact-name-display">
+                    Nama Artefak : <span id="artifactNamePreview">Contoh_Nama.txt</span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="upload-btn">Unggah Artefak</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/workspace.js"></script>
+</body>
+</html>

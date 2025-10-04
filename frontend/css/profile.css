@@ -1,0 +1,149 @@
+/* Profile Page */
+body.profile-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: url("../assets/bg\ login.png") no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+}
+
+/* Header */
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: rgba(255,255,255,0.9);
+}
+.top-header .logo {
+  width: 50px;
+}
+/* Brand area */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #2c2c54; /* sama seperti teks lain di form */
+}
+.top-header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-area .brand {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 48px;
+  color: #454384;
+}
+.top-header .user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+/* Cover */
+.cover {
+  height: 150px;
+  background: linear-gradient(90deg, #a29bfe, #6c5ce7);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 15px;
+}
+.btn-change-cover {
+  background: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Layout */
+.profile-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Sidebar */
+.profile-sidebar {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 250px;
+}
+.avatar-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.avatar-box .user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover; /* biar foto nggak gepeng */
+}
+.avatar-box .name {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 16px; /* DITAMBAHKAN: Ukuran nama di sidebar */
+}
+.sidebar-menu a {
+  display: block;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #333;
+  font-size: 16px; /* DITAMBAHKAN: Ukuran teks menu */
+}
+.sidebar-menu a.active,
+.sidebar-menu a:hover {
+  background: #e6e4fb;
+  color: #5A4FCF;
+}
+
+/* Form */
+.profile-form {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+}
+.profile-form h2 {
+  margin-bottom: 20px;
+  color: #2c2c54;
+  font-size: 28px; /* DITAMBAHKAN: Ukuran judul utama form */
+}
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.form-row input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px; /* DITAMBAHKAN: Menyamakan ukuran font input */
+}
+.btn {
+  background: #5A4FCF;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 16px; /* DITAMBAHKAN: Menyamakan tombol update */
+  cursor: pointer;
+}
