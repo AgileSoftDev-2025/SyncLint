@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 🔹 Tambahan untuk API
+    'rest_framework',
+    'corsheaders',
+
     # Apps kamu
     'api',
     'engine',
