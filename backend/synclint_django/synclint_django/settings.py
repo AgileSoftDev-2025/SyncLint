@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'synclint_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'synclint_sync',  # ← database baru kamu
+        'NAME': 'synclint_sync',  
         'USER': 'synclint_user',
         'PASSWORD': 'synclint123',
         'HOST': 'localhost',
