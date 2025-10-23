@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -11,7 +12,7 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/loginsignup.css" />
+    <link rel="stylesheet" href="{% static 'css/loginsignup.css' %}" />
     <!-- Font Awesome buat icon -->
     <link
       rel="stylesheet"
@@ -21,26 +22,39 @@
   <body>
     <!-- Logo pojok kiri atas -->
     <header class="logo-header">
-      <img src="assets/Logo.png" alt="Logo SyncLint" />
+      <img src="{% static 'assets/Logo.png' %}" alt="Logo SyncLint" />
     </header>
 
     <main class="login-container">
-      <form id="loginForm" class="login-card">
+      <form method="post" class="login-card">
+        {% csrf_token %}
+        
+        {% if messages %}
+          <div class="messages" style="background-color: #ffcccc; border: 1px solid #ff0000; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+            <ul style="margin: 0; padding: 0; list-style: none;">
+              {% for message in messages %}
+                <li style="color: #a94442; font-weight: bold;">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div style="color: red;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
         <h2>Log In</h2>
 
         <div class="input-group">
           <i class="fa fa-envelope"></i>
-          <input id="email" type="email" placeholder="Email" required />
+          <input name="username" type="email" placeholder="Email" required />
         </div>
 
         <div class="input-group">
           <i class="fa fa-lock"></i>
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
+          <input name="password" type="password" placeholder="Password" required />
         </div>
 
         <div class="options">
@@ -48,14 +62,14 @@
           <a href="forgot.html">Lupa Password?</a>
         </div>
 
-        <button id="loginBtn" type="submit">Login</button>
+        <button type="submit">Login</button>
 
         <p class="signup">
-          Belum mempunyai akun? <a href="signup.html">Sign Up</a>
+          Belum mempunyai akun? <a href="/api/signup/">Sign Up</a>
         </p>
       </form>
     </main>
 
-    <script src="js/loginsignup.js"></script>
+    <script src="{% static 'js/loginsignup.js' %}"></script>
   </body>
 </html>
