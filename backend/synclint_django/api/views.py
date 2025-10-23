@@ -15,7 +15,7 @@ def signup_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registrasi berhasil!')
-            return redirect('homepage')
+            return redirect('login')
 
     else:
 
