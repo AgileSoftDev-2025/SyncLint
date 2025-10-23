@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -11,7 +12,7 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/loginsignup.css" />
+    <link rel="stylesheet" href="{% static 'css/loginsignup.css' %}" />
     <!-- Font Awesome buat icon -->
     <link
       rel="stylesheet"
@@ -21,53 +22,54 @@
   <body>
     <!-- Logo pojok kiri atas -->
     <header class="logo-header">
-      <img src="assets/Logo.png" alt="Logo SyncLint" />
+      <img src="{% static 'assets/Logo.png' %}" alt="Logo SyncLint" />
     </header>
 
     <main class="login-container">
-      <form id="signupForm" class="login-card">
+      <form method="post" class="login-card">
+        {% csrf_token %}{% if form.errors %}
+            <div style="color: #a94442; background-color: #ffcccc; border: 1px solid #ff0000; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                <p style="margin: 0; font-weight: bold;">Terjadi kesalahan:</p>
+                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <h2>Sign Up</h2>
 
         <div class="input-group">
           <i class="fa fa-envelope"></i>
-          <input id="email" type="email" placeholder="Email" required />
+          <input name="email" type="email" placeholder="Email" required />
         </div>
 
         <div class="input-group">
           <i class="fa fa-user"></i>
-          <input id="username" type="text" placeholder="Username" required />
+          <input name="username" type="text" placeholder="Username" required />
         </div>
 
         <div class="input-group">
           <i class="fa fa-lock"></i>
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            required
-            minlength="8"
-          />
+          <input name="password1" type="password" placeholder="Password" required minlength="8" />
         </div>
 
         <div class="input-group">
           <i class="fa fa-lock"></i>
-          <input
-            id="confirm"
-            type="password"
-            placeholder="Konfirmasi Password"
-            required
-            minlength="8"
-          />
+          <input name="password2" type="password" placeholder="Konfirmasi Password" required minlength="8" />
         </div>
 
-        <button id="signupBtn" type="submit">Sign Up</button>
+        <button type="submit">Sign Up</button>
 
         <p class="signup">
-          Sudah mempunyai akun? <a href="index.html">Log In</a>
+          Sudah mempunyai akun? <a href="/api/login/">Log In</a>
         </p>
       </form>
     </main>
 
-    <script src="js/loginsignup.js"></script>
+    <script src="{% static 'js/loginsignup.js' %}"></script>
   </body>
 </html>
