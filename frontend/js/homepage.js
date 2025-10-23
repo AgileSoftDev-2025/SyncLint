@@ -113,12 +113,40 @@ document.addEventListener("DOMContentLoaded", () => {
      * Mengganti nama workspace.
      * @param {HTMLElement} element - Elemen 'Rename' yang diklik.
      */
-    function renameWorkspace(element) {
+    async function renameWorkspace(element) {
         const card = element.closest('.card');
         const cardTitle = card.querySelector('.card-title');
+        const workspaceId = card.dataset.workspaceId;
         const newName = prompt('Masukkan nama baru:', cardTitle.textContent.trim());
+        
         if (newName && newName.trim() !== "") {
-            cardTitle.textContent = newName.trim();
+            try {
+                const response = await fetch(`/api/workspace/${workspaceId}/update/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: newName.trim(),
+                        description: ''
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        cardTitle.textContent = data.workspace.name;
+                        card.querySelector('span:last-child').textContent = `Terakhir dilihat: ${data.workspace.updated_at}`;
+                    } else {
+                        alert("Gagal mengubah nama workspace: " + (data.errors || "Unknown error"));
+                    }
+                } else {
+                    alert("Gagal mengubah nama workspace: Server error");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Terjadi kesalahan saat mengubah nama workspace");
+            }
         }
     }
 
@@ -126,9 +154,34 @@ document.addEventListener("DOMContentLoaded", () => {
      * Menghapus workspace.
      * @param {HTMLElement} element - Elemen 'Delete' yang diklik.
      */
-    function deleteWorkspace(element) {
+    async function deleteWorkspace(element) {
+        const card = element.closest('.card');
+        const workspaceId = card.dataset.workspaceId;
+        
         if (confirm('Apakah Anda yakin ingin menghapus workspace ini?')) {
-            element.closest('.card').remove();
+            try {
+                const response = await fetch(`/api/workspace/${workspaceId}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        card.remove();
+                    } else {
+                        alert("Gagal menghapus workspace: " + (data.errors || "Unknown error"));
+                    }
+                } else {
+                    alert("Gagal menghapus workspace: Server error");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Terjadi kesalahan saat menghapus workspace");
+            }
         }
     }
 
@@ -151,27 +204,55 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Membuat elemen kartu workspace baru dan menambahkannya ke grid.
      */
-    function createWorkspace() {
+    async function createWorkspace() {
         const name = inputName.value.trim();
-        if (name) {
-            const newCard = document.createElement("div");
-            newCard.className = "card";
-            newCard.style.cursor = "pointer"; // Langsung tambahkan style cursor
-            newCard.innerHTML = `
-                <div class="card-top">
-                    <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
-                </div>
-                <div class="menu-dot">⋮</div>
-                <div class="card-bottom">
-                    <div class="card-title">${name}</div>
-                    <span>Dibuat: ${new Date().toLocaleDateString('id-ID')}</span><br>
-                    <span>Terakhir dilihat: Baru saja</span>
-                </div>
-            `;
-            grid.appendChild(newCard);
-            closeCreateModal();
-        } else {
+        if (!name) {
             alert("Nama workspace tidak boleh kosong!");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/workspace/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: ''
+                }),
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const newCard = document.createElement("div");
+                    newCard.className = "card";
+                    newCard.style.cursor = "pointer";
+                    newCard.dataset.workspaceId = data.workspace.id;
+                    newCard.innerHTML = `
+                        <div class="card-top">
+                            <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+                        </div>
+                        <div class="menu-dot">⋮</div>
+                        <div class="card-bottom">
+                            <div class="card-title">${data.workspace.name}</div>
+                            <span>Dibuat: ${data.workspace.created_at}</span><br>
+                            <span>Terakhir dilihat: ${data.workspace.updated_at}</span>
+                        </div>
+                    `;
+                    grid.appendChild(newCard);
+                    closeCreateModal();
+                } else {
+                    alert("Gagal membuat workspace: " + (data.errors || "Unknown error"));
+                }
+            } else {
+                alert("Gagal membuat workspace: Server error");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("Terjadi kesalahan saat membuat workspace");
         }
     }
     
