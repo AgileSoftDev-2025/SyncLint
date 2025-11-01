@@ -1,22 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace 1</title>
-    <link rel="stylesheet" href="css/workspace.css">
+    <title>{{ workspace.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/workspace.css' %}">
 </head>
 <body>
 
     <div class="container">
         <header class="header">
-            <a href="homepage.html" style="text-decoration: none; color: inherit;">
-                <h1>Workspace 1</h1>
+            <a href="{% url 'homepage' %}" style="text-decoration: none; color: inherit;">
+                <h1>{{ workspace.name }}</h1>
             </a>
             <div class="user-profile">
-                <a href="profile.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                <a href="{% url 'profile' %}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
                     <div class="icon"></div>
-                    <span>Username</span>
+                    <span>{{ request.user.username }}</span>
                 </a>
             </div>
         </header>
@@ -121,6 +122,6 @@
             </div>
         </div>
     </div>
-    <script src="js/workspace.js"></script>
+    <script src="{% static 'js/workspace.js' %}"></script>
 </body>
 </html>
