@@ -1,27 +1,33 @@
+# File: backend/synclint_django/api/forms.py (VERSI FINAL SEBENARNYA)
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import User, Workspace
 import uuid  
 
 class CustomSignupForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ('email', 'username', 'password1', 'password2')  
+    # Kita tambahkan first_name dan last_name ke form pendaftaran
+    first_name = forms.CharField(max_length=150, required=False)
+    last_name = forms.CharField(max_length=150, required=False)
 
+    class Meta(UserCreationForm.Meta): # PENTING: Warisi dari Meta induk
+        model = User
+        # Tentukan field yang ingin kita tambahkan ke form UserCreationForm
+        fields = ('username', 'email', 'first_name', 'last_name') 
+
+    # Method save() ini sekarang mewarisi hashing password dari induknya
+    # dan hanya menambahkan data first_name dan last_name.
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.user_id = str(uuid.uuid4())[:10]  
-        user.set_password(self.cleaned_data['password1'])  
-        user.kota = ''  
-        user.negara = ''
-        user.no_telp = ''
-        user.photo = ''
+        user = super().save(commit=False) # Jangan simpan dulu
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
         if commit:
             user.save()
         return user
 
 class CustomLoginForm(forms.Form):
-    username = forms.EmailField(label='Email', max_length=100)
+    # 'username' di sini sebenarnya adalah 'email'
+    username = forms.EmailField(label='Email', max_length=100) 
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 class WorkspaceForm(forms.ModelForm):
@@ -45,7 +51,6 @@ class WorkspaceForm(forms.ModelForm):
     
     def save(self, user=None, commit=True):
         workspace = super().save(commit=False)
-        workspace.workspace_id = str(uuid.uuid4())[:5]
         if user:
             workspace.user = user
         if commit:

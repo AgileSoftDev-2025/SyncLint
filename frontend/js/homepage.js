@@ -1,8 +1,9 @@
-// Menunggu hingga seluruh konten halaman siap sebelum menjalankan skrip.
+// File: frontend/js/homepage.js (VERSI FINAL BARU)
+
 document.addEventListener("DOMContentLoaded", () => {
     
     // =============================================
-    // ===== INISIALISASI & SELEKSI ELEMEN DOM =====
+    // ===== SELEKSI ELEMEN DOM =====
     // =============================================
     const grid = document.querySelector(".grid");
     const modal = document.getElementById("workspaceModal");
@@ -12,136 +13,114 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputName = document.getElementById("workspaceName");
 
     // =============================================
+    // ===== FUNGSI HELPER (BARU) =====
+    // =============================================
+    
+    /**
+     * Mengambil CSRF token dari template HTML
+     */
+    function getCSRFToken() {
+        const tokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        return tokenInput ? tokenInput.value : null;
+    }
+
+    // =============================================
     // =============== EVENT LISTENERS ===============
     // =============================================
-
-    // Listener utama pada grid untuk menangani klik pada kartu dan menu.
-    if (grid) {
-        grid.addEventListener("click", handleGridClick);
-    }
-
-    // Listener untuk membuka modal
-    if (addBtn) {
-        addBtn.addEventListener("click", openCreateModal);
-    }
-
-    // Listener untuk menutup modal
-    if (closeBtn) {
-        closeBtn.addEventListener("click", closeCreateModal);
-    }
-    
-    // Listener untuk membuat workspace baru dari modal
-    if (createBtn) {
-        createBtn.addEventListener("click", createWorkspace);
-    }
-
-    // Listener untuk menutup modal jika klik di luar area konten
+    if (grid) grid.addEventListener("click", handleGridClick);
+    if (addBtn) addBtn.addEventListener("click", openCreateModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeCreateModal);
+    if (createBtn) createBtn.addEventListener("click", createWorkspace);
     window.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            closeCreateModal();
-        }
+        if (e.target === modal) closeCreateModal();
     });
-
-    // Listener untuk submit dengan tombol ENTER di input
-    if (inputName) {
-        inputName.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                createWorkspace();
-            }
-        });
-    }
+    if (inputName) inputName.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") createWorkspace();
+    });
     
-    // Inisialisasi kartu yang sudah ada agar interaktif
     initializeCards();
 
     // =============================================
-    // ================== FUNGSI ===================
+    // ================== FUNGSI (DIPERBAIKI) ===================
     // =============================================
 
     /**
      * Menangani semua klik di dalam area grid (kartu atau menu).
-     * @param {Event} e - Objek event klik.
      */
     function handleGridClick(e) {
         const card = e.target.closest('.card');
-        if (!card) return; // Keluar jika klik tidak di dalam kartu
+        if (!card) return;
 
-        // Jika yang diklik adalah menu titik tiga
+        const workspaceId = card.dataset.workspaceId;
+
         if (e.target.classList.contains('menu-dot')) {
-            toggleMenu(e.target);
+            toggleMenu(e.target, workspaceId); // Beri ID ke menu
         } 
-        // Jika yang diklik adalah opsi rename/delete di dalam menu
         else if (e.target.closest('.menu')) {
             const action = e.target.dataset.action;
-            if (action === 'rename') renameWorkspace(e.target);
-            if (action === 'delete') deleteWorkspace(e.target);
+            if (action === 'rename') renameWorkspace(card); // Kirim seluruh kartu
+            if (action === 'delete') deleteWorkspace(card); // Kirim seluruh kartu
         }
-        // Jika yang diklik adalah kartu itu sendiri
         else {
-            window.location.href = 'workspace.html';
+            // PERBAIKAN ERROR 404: Arahkan ke URL view baru
+            window.location.href = `/api/workspace/${workspaceId}/`; 
         }
     }
 
     /**
      * Menampilkan atau menyembunyikan menu pada kartu.
-     * @param {HTMLElement} dot - Elemen menu-dot yang diklik.
      */
-    function toggleMenu(dot) {
-        // Hapus menu lain yang mungkin terbuka
+    function toggleMenu(dot, workspaceId) {
         document.querySelectorAll('.menu').forEach(menu => menu.remove());
 
         const menu = document.createElement('div');
         menu.className = 'menu';
+        // Simpan ID di menu untuk referensi
         menu.innerHTML = `
             <div data-action="rename">Rename</div>
             <div data-action="delete">Delete</div>
         `;
         dot.parentElement.appendChild(menu);
 
-        // Menutup menu jika klik di luar
         setTimeout(() => {
             document.addEventListener('click', function closeMenu(event) {
                 if (!menu.contains(event.target)) {
                     menu.remove();
                     document.removeEventListener('click', closeMenu);
                 }
-            }, { once: true }); // Opsi 'once' agar listener otomatis terhapus
+            }, { once: true });
         }, 0);
     }
     
     /**
-     * Mengganti nama workspace.
-     * @param {HTMLElement} element - Elemen 'Rename' yang diklik.
+     * Mengganti nama workspace (DIPERBAIKI)
      */
-    async function renameWorkspace(element) {
-        const card = element.closest('.card');
+    async function renameWorkspace(card) {
         const cardTitle = card.querySelector('.card-title');
-        const workspaceId = card.dataset.workspaceId;
+        const workspaceId = card.dataset.workspaceId; // Ambil ID dari kartu
         const newName = prompt('Masukkan nama baru:', cardTitle.textContent.trim());
         
         if (newName && newName.trim() !== "") {
             try {
                 const response = await fetch(`/api/workspace/${workspaceId}/update/`, {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken() // TAMBAHKAN CSRF TOKEN
                     },
                     body: JSON.stringify({
                         name: newName.trim(),
-                        description: ''
+                        description: '' // Kirim deskripsi kosong atau ambil dari data lama
                     })
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        cardTitle.textContent = data.workspace.name;
-                        card.querySelector('span:last-child').textContent = `Terakhir dilihat: ${data.workspace.updated_at}`;
-                    } else {
-                        alert("Gagal mengubah nama workspace: " + (data.errors || "Unknown error"));
-                    }
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
+                    cardTitle.textContent = data.workspace.name;
+                    // Perbarui timestamp
+                    card.querySelector('span:last-of-type').textContent = `Terakhir dilihat: ${data.workspace.updated_at}`;
                 } else {
-                    alert("Gagal mengubah nama workspace: Server error");
+                    alert("Gagal mengubah nama workspace: " + (data.errors ? JSON.stringify(data.errors) : "Unknown error"));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -151,32 +130,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Menghapus workspace.
-     * @param {HTMLElement} element - Elemen 'Delete' yang diklik.
+     * Menghapus workspace (DIPERBAIKI)
      */
-    async function deleteWorkspace(element) {
-        const card = element.closest('.card');
-        const workspaceId = card.dataset.workspaceId;
+    async function deleteWorkspace(card) {
+        const workspaceId = card.dataset.workspaceId; // Ambil ID dari kartu
         
         if (confirm('Apakah Anda yakin ingin menghapus workspace ini?')) {
             try {
                 const response = await fetch(`/api/workspace/${workspaceId}/delete/`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken() // TAMBAHKAN CSRF TOKEN
+                    }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        card.remove();
-                    } else {
-                        alert("Gagal menghapus workspace: " + (data.errors || "Unknown error"));
-                    }
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
+                    card.remove();
                 } else {
-                    alert("Gagal menghapus workspace: Server error");
+                    alert("Gagal menghapus workspace: " + (data.errors ? JSON.stringify(data.errors) : "Unknown error"));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -185,24 +158,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /**
-     * Membuka modal untuk membuat workspace baru.
-     */
     function openCreateModal() {
         modal.style.display = "flex";
         inputName.value = "";
         inputName.focus();
     }
     
-    /**
-     * Menutup modal.
-     */
     function closeCreateModal() {
         modal.style.display = "none";
     }
 
     /**
-     * Membuat elemen kartu workspace baru dan menambahkannya ke grid.
+     * Membuat elemen kartu workspace baru (DIPERBAIKI)
      */
     async function createWorkspace() {
         const name = inputName.value.trim();
@@ -215,40 +182,38 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch('/api/workspace/create/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() // TAMBAHKAN CSRF TOKEN
                 },
                 body: JSON.stringify({
                     name: name,
                     description: ''
-                }),
-                credentials: 'include'
+                })
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.status === 'success') {
-                    const newCard = document.createElement("div");
-                    newCard.className = "card";
-                    newCard.style.cursor = "pointer";
-                    newCard.dataset.workspaceId = data.workspace.id;
-                    newCard.innerHTML = `
-                        <div class="card-top">
-                            <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
-                        </div>
-                        <div class="menu-dot">⋮</div>
-                        <div class="card-bottom">
-                            <div class="card-title">${data.workspace.name}</div>
-                            <span>Dibuat: ${data.workspace.created_at}</span><br>
-                            <span>Terakhir dilihat: ${data.workspace.updated_at}</span>
-                        </div>
-                    `;
-                    grid.appendChild(newCard);
-                    closeCreateModal();
-                } else {
-                    alert("Gagal membuat workspace: " + (data.errors || "Unknown error"));
-                }
+            const data = await response.json(); // Baca JSON bahkan jika error 400
+
+            if (response.ok && data.status === 'success') {
+                const newCard = document.createElement("div");
+                newCard.className = "card";
+                newCard.style.cursor = "pointer";
+                newCard.dataset.workspaceId = data.workspace.id; // Gunakan .id
+                newCard.innerHTML = `
+                    <div class="card-top">
+                        <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
+                    </div>
+                    <div class="menu-dot">⋮</div>
+                    <div class="card-bottom">
+                        <div class="card-title">${data.workspace.name}</div>
+                        <span>Dibuat: ${data.workspace.created_at}</span><br>
+                        <span>Terakhir dilihat: ${data.workspace.updated_at}</span>
+                    </div>
+                `;
+                grid.appendChild(newCard);
+                closeCreateModal();
             } else {
-                alert("Gagal membuat workspace: Server error");
+                // Tampilkan pesan error dari server
+                alert("Gagal membuat workspace: " + (data.errors ? JSON.stringify(data.errors) : "Unknown error"));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -256,9 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    /**
-     * Memberi style cursor pada kartu yang sudah ada di HTML.
-     */
     function initializeCards() {
         document.querySelectorAll('.card').forEach(card => {
             card.style.cursor = 'pointer';
