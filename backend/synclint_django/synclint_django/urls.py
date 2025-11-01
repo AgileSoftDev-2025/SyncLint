@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), 
     path('', RedirectView.as_view(url='/api/', permanent=False)),
- 
+    path('api/auth/', include('dj_rest_auth.urls')),
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')),  
+    path('api/profile/', include('profiles.urls')),
 ]
