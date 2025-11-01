@@ -157,6 +157,6 @@ def workspace_update(request, id):
 @login_required
 @require_http_methods(['DELETE'])
 def workspace_delete(request, id):
-    workspace = get_object_or_404(Workspace, workspace_id=workspace_id, user=request.user)
+    workspace = get_object_or_404(Workspace, id=id, user=request.user)
     workspace.delete()
     return JsonResponse({'status': 'success'})
