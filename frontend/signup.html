@@ -1,73 +1,83 @@
-<!DOCTYPE html>
+{% load static %} <!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>SyncLint — Sign Up</title>
 
-    <!-- Import Google Font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/loginsignup.css" />
-    <!-- Font Awesome buat icon -->
+    <link rel="stylesheet" href="{% static 'css/loginsignup.css' %}" />
+    
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
   <body>
-    <!-- Logo pojok kiri atas -->
     <header class="logo-header">
-      <img src="assets/Logo.png" alt="Logo SyncLint" />
+      <img src="{% static 'assets/Logo.png' %}" alt="Logo SyncLint" />
     </header>
 
     <main class="login-container">
-      <form id="signupForm" class="login-card">
+      
+      <form id="signupForm" class="login-card" method="POST" action="{% url 'signup' %}">
+      
+        {% csrf_token %}
+        {% if form.errors %}
+          <div style="color: red; margin-bottom: 10px; text-align: left;">
+            <strong>Error:</strong>
+            <ul>
+              {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                  <li>{{ field|capfirst }}: {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
         <h2>Sign Up</h2>
+        
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          <input name="first_name" type="text" placeholder="First Name" />
+        </div>
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          <input name="last_name" type="text" placeholder="Last Name" />
+        </div>
 
         <div class="input-group">
           <i class="fa fa-envelope"></i>
-          <input id="email" type="email" placeholder="Email" required />
+          <input id="email" name="email" type="email" placeholder="Email" required />
         </div>
 
         <div class="input-group">
           <i class="fa fa-user"></i>
-          <input id="username" type="text" placeholder="Username" required />
+          <input id="username" name="username" type="text" placeholder="Username" required />
         </div>
 
         <div class="input-group">
           <i class="fa fa-lock"></i>
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            required
-            minlength="8"
-          />
+          <input id="password" name="password1" type="password" placeholder="Password" required minlength="8" />
         </div>
-
+        
         <div class="input-group">
           <i class="fa fa-lock"></i>
-          <input
-            id="confirm"
-            type="password"
-            placeholder="Konfirmasi Password"
-            required
-            minlength="8"
-          />
+          <input id="password_confirm" name="password2" type="password" placeholder="Konfirmasi Password" required minlength="8" />
         </div>
-
+        
         <button id="signupBtn" type="submit">Sign Up</button>
 
         <p class="signup">
-          Sudah mempunyai akun? <a href="index.html">Log In</a>
+          Sudah mempunyai akun? <a href="{% url 'login' %}">Log In</a>
         </p>
       </form>
     </main>
 
-    <script src="js/loginsignup.js"></script>
+    <script src="{% static 'js/loginsignup.js' %}"></script>
   </body>
 </html>

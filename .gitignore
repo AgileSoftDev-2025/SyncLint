@@ -222,3 +222,6 @@ dist/
 
 # OS
 .DS_Store
+
+# File media yang di-upload pengguna
+/backend/synclint_django/media/
