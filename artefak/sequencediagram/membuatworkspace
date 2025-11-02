@@ -1,0 +1,36 @@
+@startuml
+title Sequence Diagram: Membuat Workspace Baru
+
+actor Pengguna
+boundary Form as "Formulir Workspace"
+control CreateControl as "Kontrol Pembuatan"
+entity Workspace as "Entitas Workspace"
+
+Pengguna -> Form: Buka Form (Klik 'Buat Workspace')
+activate Form
+Form -> Pengguna: Tampilkan Form Input
+
+Pengguna -> Form: Submit Data (Nama)
+Form -> CreateControl: Request Cek & Buat (Nama)
+activate CreateControl
+
+alt Nama Unik (Success)
+    CreateControl -> Workspace: Cek Nama
+    Workspace -> Workspace: Validasi Unik
+    
+    CreateControl -> Workspace: Buat Objek Baru (save())
+    Workspace -> Workspace: Simpan ke Database
+    
+    CreateControl --> Form: Success
+else Nama Sudah Digunakan (Failure)
+    CreateControl -> Workspace: Cek Nama
+    Workspace -> Workspace: Validasi Unik (Return True)
+    
+    CreateControl --> Form: Error (Nama Duplikat)
+end
+
+Form --> Pengguna: Tampilkan Hasil (Daftar Update / Pesan Error)
+deactivate Form
+deactivate CreateControl
+
+@enduml

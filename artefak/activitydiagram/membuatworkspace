@@ -1,0 +1,23 @@
+@startuml
+title Activity Diagram: Membuat Workspace Baru
+
+start
+:Pengguna sudah login dan melihat daftar Workspace;
+
+:Klik tombol "Buat Workspace";
+
+:Tampilkan formulir/modal pembuatan Workspace;
+:Isi Nama Workspace yang diinginkan;
+
+if (Validasi: Nama Workspace unik?) then (Ya)
+    :Klik tombol "Buat";
+    :Sistem menyimpan data Workspace baru;
+    :Workspace baru ditambahkan ke daftar Workspace;
+else (Tidak)
+    :Tampilkan pesan error nama sudah digunakan;
+    -> [Kembali mengisi] Ulangi input Nama;
+    stop
+endif
+
+stop
+@enduml

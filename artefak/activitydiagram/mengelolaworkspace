@@ -1,0 +1,36 @@
+@startuml
+title Activity Diagram: Mengelola Workspace
+
+start
+:Pengguna melihat daftar Workspace yang dimiliki;
+
+:Pilih Workspace yang ingin dikelola;
+
+:Klik menu 3 titik (...) di Workspace;
+
+split
+    :Pilih opsi "rename";
+    :Tampilkan kolom input nama baru;
+    :Masukkan Nama Workspace baru;
+
+    if (Validasi: Nama baru unik?) then (Ya)
+        :Klik tombol "Ganti nama";
+        :Nama Workspace diperbarui di seluruh sistem;
+    else (Tidak)
+        :Tampilkan pesan error nama sudah digunakan;
+        -> Ulangi input Nama;
+    endif
+split again
+    :Pilih opsi "Delete";
+    :Tampilkan dialog konfirmasi penghapusan permanen;
+
+    if (Konfirmasi penghapusan?) then (Ya)
+        :Hapus Workspace dan semua artefak terkait;
+        :Workspace hilang dari daftar;
+    else (Tidak)
+        :Batal menghapus;
+    endif
+split end
+
+stop
+@enduml

@@ -1,0 +1,15 @@
+Scenario 1: Successful Workspace Rename
+Given the User is logged in and viewing "Workspace"
+When the User selects the 3 dots menu and clicks the "rename" option
+And the User enters the new unique name "Workspace - Final"
+And the User clicks "Ganti nama"
+Then the Workspace name displayed on the screen is updated to "Workspace - Final"
+And the updated name "Workspace - Final" is reflected in the main Workspace list
+
+Scenario 2: Successful Workspace Deletion
+Given the User is logged in
+And the User owns "Proyek C" which contains several artifacts
+When the User selects the "Delete" option for "Proyek C"
+And the User confirms the deletion in the subsequent dialog
+Then the system redirects the User to the main Workspace list/dashboard
+And "Proyek C" is no longer visible in the list of Workspaces

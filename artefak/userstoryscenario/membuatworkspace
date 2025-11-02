@@ -1,0 +1,5 @@
+Scenario 1: Successful Workspace Creation
+Given the User is logged in to the SyncLint application and is viewing the Workspace list/dashboard
+When the User clicks the "Buat Workspace" button, fills the form with a unique Workspace Name "Workspace Baru", and clicks "Buat"
+Then the form/modal for creating a Workspace is closed
+And the new Workspace named "Workspace Baru" is displayed in the Workspace list on the current page

@@ -1,0 +1,48 @@
+@startuml
+title Sequence Diagram: Mengelola Workspace
+
+actor Pengguna
+boundary ListDetail as "List/Detail View"
+control ManageControl as "Kontrol Pengelolaan"
+entity Workspace as "Entitas Workspace"
+
+Pengguna -> ListDetail: Klik menu 3 titik (...)
+activate ListDetail
+
+alt Ganti Nama Workspace
+    Pengguna -> ListDetail: Pilih "rename"
+    ListDetail -> Pengguna: Tampilkan input Nama Baru
+
+    Pengguna -> ListDetail: Submit Nama Baru (X)
+    ListDetail -> ManageControl: Request Ganti Nama (ID, Nama Baru X)
+    activate ManageControl
+
+    alt Nama Baru Unik
+        ManageControl -> Workspace: Cek & Update Nama
+        Workspace -> Workspace: Persist Update
+        ManageControl --> ListDetail: Success
+    else Nama Tidak Unik
+        ManageControl -> Workspace: Cek Nama
+        ManageControl --> ListDetail: Error (Nama Duplikat)
+    end
+    ListDetail --> Pengguna: Perbarui Tampilan Nama
+    deactivate ManageControl
+
+else Hapus Workspace
+    Pengguna -> ListDetail: Pilih "Delete Workspace"
+    ListDetail -> Pengguna: Tampilkan dialog konfirmasi
+    
+    Pengguna -> ListDetail: Konfirmasi Hapus
+    ListDetail -> ManageControl: Request Hapus (ID)
+    activate ManageControl
+    
+    ManageControl -> Workspace: Hapus Objek
+    Workspace -> Workspace: Delete dari Database
+    
+    ManageControl --> ListDetail: Success
+    ListDetail --> Pengguna: Hapus Workspace dari Tampilan
+    deactivate ManageControl
+end alt
+deactivate ListDetail
+
+@enduml
