@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'api',
     'engine',
     'profiles',
-    'synclint_django',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

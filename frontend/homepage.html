@@ -6,40 +6,45 @@
 </head>
 <body>
 <div class="sidebar">
-<div class="logo-container">
+    <div class="logo-container">
         <img class="logo" src="{% static 'assets/Logo.png' %}" alt="Logo"> 
         <span class="logo-text">SyncLint</span>
     </div>
     <div class="bottom-nav">
-    <div class="row">
-        <div class="nav-icon-container"></div> <div class="cell">FAQ</div>
-    </div>
-
-    <div class="row">
-        <div class="nav-icon-container"></div> <div class="cell">Pengaturan</div>
-    </div>
-
-    <div class="row">
-        <div class="nav-icon-container"> <img class="user-icon" src="https://img.icons8.com/ios/20/000000/user.png" alt="User Icon">
+        <div class="row">
+            <div class="nav-icon-container"></div> <div class="cell">FAQ</div>
         </div>
-        <a href="{% url 'profile_page' %}" class="cell" style="text-decoration: none; color: inherit;">Profil</a>
+        <div class="row">
+            <div class="nav-icon-container"></div> <div class="cell">Pengaturan</div>
+        </div>
+        <div class="row">
+            <div class="nav-icon-container"> <img class="user-icon" src="https://img.icons8.com/ios/20/000000/user.png" alt="User Icon">
+            </div>
+            <a href="{% url 'profile_page' %}" class="cell" style="text-decoration: none; color: inherit;">Profil</a>
+        </div>
     </div>
-</div>
 </div>
 
 <div class="main-content">
     {% csrf_token %}
     <div class="header">
-        <input type="text" class="search-bar" placeholder="Cari workspace...">
+        <input type="text" id="searchWorkspace" class="search-bar" placeholder="Cari workspace...">
         <div class="action-buttons">
-            <button class="sort-btn">Sortir Workspace</button>
+            <select id="sortWorkspace" class="sort-select">
+                <option value="">Sortir berdasarkan...</option>
+                <option value="name-asc">Nama (A-Z)</option>
+                <option value="name-desc">Nama (Z-A)</option>
+                <option value="date-asc">Tanggal (Lama ke Baru)</option>
+                <option value="date-desc">Tanggal (Baru ke Lama)</option>
+            </select>
             <button class="add-btn">+ Buat Workspace</button>
         </div>
     </div>
 
     <div class="grid">
         {% for workspace in workspaces %}
-        <div class="card" data-workspace-id="{{ workspace.id }}"> <div class="card-top">
+        <div class="card" data-workspace-id="{{ workspace.id }}"> 
+            <div class="card-top">
                 <img src="https://img.icons8.com/ios/50/000000/document.png" alt="Document Icon" class="document-icon">
             </div>
             <div class="menu-dot">⋮</div>
@@ -53,14 +58,28 @@
     </div>
 </div>
 
-<!-- Modal Buat Workspace -->
 <div id="workspaceModal" class="modal">
   <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Buat Workspace Baru</h2>
+    <span class="close-create">&times;</span>
+    <h2 id="modalTitle">Buat Workspace Baru</h2>
     <input type="text" id="workspaceName" placeholder="Masukkan nama workspace">
+    
     <button id="createWorkspaceBtn">Buat</button>
+    <button id="renameWorkspaceBtn" style="display: none;">Ganti Nama</button>
   </div>
 </div>
+
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <span class="close-delete">&times;</span>
+    <h2>Hapus Workspace</h2>
+    <p>Apakah Anda yakin ingin menghapus workspace <span id="deleteWorkspaceName"></span>?</p>
+    <div style="margin-top: 20px;">
+        <button id="cancelDeleteBtn" class="cancel-btn">Batal</button>
+        <button id="confirmDeleteBtn" class="delete-btn">Hapus</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
