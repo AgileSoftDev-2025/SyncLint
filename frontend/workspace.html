@@ -7,7 +7,7 @@
     <title>{{ workspace.name }}</title>
     <link rel="stylesheet" href="{% static 'css/workspace.css' %}">
 </head>
-<body>
+<body data-workspace-id="{{ workspace.id }}">
 
     <div class="container">
         <header class="header">
@@ -52,15 +52,15 @@
                     <div class="panel-title">
                         <h2>Unggah Artefak Baru</h2>
                     </div>
-                    <div class="buttons-grid">
-                        <button>SQL</button>
-                        <button>BPMN</button>
-                        <button>Sequence Diagram</button>
-                        <button>Use Case Specification</button>
-                        <button>Use Case Diagram</button>
-                        <button>Class Diagram</button>
-                        <button>Activity Diagram</button>
-                        <button>Wireframe</button>
+                    <div class="buttons-grid" id="upload-triggers">
+                        <button data-type="SQL_DDL">SQL</button>
+                        <button data-type="BPMN">BPMN</button>
+                        <button data-type="SEQUENCE_DIAGRAM">Sequence Diagram</button>
+                        <button data-type="USE_CASE_SPEC">Use Case Specification</button>
+                        <button data-type="USE_CASE_DIAGRAM">Use Case Diagram</button>
+                        <button data-type="CLASS_DIAGRAM">Class Diagram</button>
+                        <button data-type="ACTIVITY_DIAGRAM">Activity Diagram</button>
+                        <button data-type="WIREFRAME_SALT">Wireframe</button>
                     </div>
                 </section>
             </div>
@@ -112,8 +112,9 @@
                 <label for="artifactText">Teks</label>
                 <textarea id="artifactText" rows="6" placeholder="Ketik atau tempel teks"></textarea>
                 
-                <div class="artifact-name-display">
-                    Nama Artefak : <span id="artifactNamePreview">Contoh_Nama.txt</span>
+                <div class="artifact-name-input">
+                    <label for="artifactNameInput">Nama Artefak</label>
+                    <input type="text" id="artifactNameInput" placeholder="Contoh: User_Login_Flow.bpmn">
                 </div>
 
             </div>

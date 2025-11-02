@@ -36,7 +36,7 @@ class Artefak(models.Model):
 class Report(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     result = models.TextField()
-    artefak = models.ForeignKey(Artefak, on_delete=models.CASCADE, related_name='reports')
+    artefaks = models.ManyToManyField(Artefak, related_name='reports')
 
     def __str__(self):
-        return f"Report for {self.artefak.name} on {self.date}"
+        return f"Report {self.id} (dibuat pada {self.date.strftime('%Y-%m-%d')})"

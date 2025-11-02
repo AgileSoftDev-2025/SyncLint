@@ -160,3 +160,82 @@ def workspace_delete(request, id):
     workspace = get_object_or_404(Workspace, id=id, user=request.user)
     workspace.delete()
     return JsonResponse({'status': 'success'})
+
+# =======================================================
+# FUNGSI UNGGAL ARTEFAK (BARU)
+# =======================================================
+from .models import Artefak # Pastikan Artefak di-import di bagian atas
+from engine.parsers import parse_artifact_file # Import parser engine kita
+
+@login_required
+@require_http_methods(['POST'])
+def artefak_upload_view(request):
+    """
+    Menangani unggahan file artefak baru.
+    View ini mengharapkan 'multipart/form-data', BUKAN JSON.
+    Frontend harus mengirim 'file', 'name', 'type', dan 'workspace_id'.
+    """
+    try:
+        # 1. Ambil data dari form-data (bukan json.loads)
+        file_obj = request.FILES.get('file')
+        name = request.POST.get('name')
+        artefak_type = request.POST.get('type')
+        workspace_id = request.POST.get('workspace_id')
+
+        # 2. Validasi input
+        if not all([file_obj, name, artefak_type, workspace_id]):
+            return JsonResponse(
+                {"status": "error", "errors": "Data tidak lengkap (file, name, type, workspace_id dibutuhkan)."},
+                status=400
+            )
+
+        # 3. Validasi tipe artefak
+        SUPPORTED_TYPES = [
+            'USE_CASE_SPEC', 'BPMN', 'CLASS_DIAGRAM', 'USE_CASE_DIAGRAM',
+            'ACTIVITY_DIAGRAM', 'SEQUENCE_DIAGRAM', 'WIREFRAME_SALT', 'SQL_DDL'
+        ]
+        if artefak_type not in SUPPORTED_TYPES:
+            return JsonResponse(
+                {"status": "error", "errors": f"Tipe artefak '{artefak_type}' tidak didukung."}, 
+                status=400
+            )
+
+        # 4. Dapatkan workspace
+        workspace = get_object_or_404(Workspace, id=workspace_id, user=request.user)
+
+        # 5. Buat objek Artefak
+        artefak = Artefak.objects.create(
+            name=name,
+            type=artefak_type,
+            file=file_obj,
+            workspace=workspace
+            # filejson masih null
+        )
+
+        # 6. Panggil Engine Parser
+        # Fungsi ini akan mem-parsing file dan mengisi field 'filejson'
+        success, message = parse_artifact_file(artefak)
+
+        if not success:
+            artefak.delete() # Hapus file jika parsing gagal
+            return JsonResponse(
+                {"status": "error", "errors": f"Parsing gagal: {message}"}, 
+                status=400
+            )
+
+        # 7. Kirim respons sukses
+        return JsonResponse({
+            "status": "success",
+            "artefak": {
+                "id": artefak.id,
+                "name": artefak.name,
+                "type": artefak.type,
+                "file_url": artefak.file.url,
+                "filejson_content": artefak.filejson # Mengirim kembali JSON yang sudah diparsing
+            }
+        }, status=201)
+
+    except Workspace.DoesNotExist:
+        return JsonResponse({"status": "error", "errors": "Workspace tidak ditemukan."}, status=404)
+    except Exception as e:
+        return JsonResponse({"status": "error", "errors": str(e)}, status=500)
