@@ -1,0 +1,12 @@
+Feature: User Login
+Scenario: Successful login
+Given I am on the "Login" page
+When I enter a valid email and password
+And I press the "Login" button
+Then I should be redirected to the "Dashboard"
+And I should see my list of workspaces
+Scenario: Invalid credentials
+Given I am on the "Login" page
+When I enter an incorrect email or password
+And I press the "Login" button
+Then I should see an error message "Invalid credentials"

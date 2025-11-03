@@ -1,75 +1,101 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>SyncLint — Sign Up</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SyncLint — Daftar</title>
 
-    <!-- Import Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{% static 'css/loginsignup.css' %}" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<body>
+  <header class="logo-header">
+    <img src="{% static 'assets/Logo.png' %}" alt="Logo SyncLint" />
+  </header>
 
-    <link rel="stylesheet" href="{% static 'css/loginsignup.css' %}" />
-    <!-- Font Awesome buat icon -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <!-- Logo pojok kiri atas -->
-    <header class="logo-header">
-      <img src="{% static 'assets/Logo.png' %}" alt="Logo SyncLint" />
-    </header>
-
-    <main class="login-container">
-      <form method="post" class="login-card">
-        {% csrf_token %}{% if form.errors %}
-            <div style="color: #a94442; background-color: #ffcccc; border: 1px solid #ff0000; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                <p style="margin: 0; font-weight: bold;">Terjadi kesalahan:</p>
-                <ul style="margin: 5px 0 0 20px; padding: 0;">
-                    {{ form.non_field_errors }}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ field.label }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-        <h2>Sign Up</h2>
-
-        <div class="input-group">
-          <i class="fa fa-envelope"></i>
-          <input name="email" type="email" placeholder="Email" required />
+  <main class="login-container">
+    <form method="POST" class="login-card">
+      {% csrf_token %}
+      {% if form.errors %}
+        <div class="error-message" style="color: #a94442; background-color: #ffcccc; border: 1px solid #ff0000; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+          <p style="margin: 0;">Terjadi kesalahan:</p>
+          <ul style="margin: 5px 0 0 20px; padding: 0;">
+            {{ form.non_field_errors }}
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
         </div>
+      {% endif %}
+      <h2>Daftar</h2>
 
-        <div class="input-group">
-          <i class="fa fa-user"></i>
-          <input name="username" type="text" placeholder="Username" required />
-        </div>
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          autocomplete="email"
+        />
+      </div>
 
-        <div class="input-group">
-          <i class="fa fa-lock"></i>
-          <input name="password1" type="password" placeholder="Password" required minlength="8" />
-        </div>
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input
+          name="username"
+          type="text"
+          placeholder="Nama Pengguna"
+          required
+          autocomplete="username"
+        />
+      </div>
 
-        <div class="input-group">
-          <i class="fa fa-lock"></i>
-          <input name="password2" type="password" placeholder="Konfirmasi Password" required minlength="8" />
-        </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input
+          name="password1"
+          type="password"
+          placeholder="Kata Sandi"
+          required
+          minlength="8"
+          autocomplete="new-password"
+        />
+      </div>
 
-        <button type="submit">Sign Up</button>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input
+          name="password2"
+          type="password"
+          placeholder="Konfirmasi Kata Sandi"
+          required
+          minlength="8"
+          autocomplete="new-password"
+        />
+      </div>
 
-        <p class="signup">
-          Sudah mempunyai akun? <a href="/api/login/">Log In</a>
-        </p>
-      </form>
-    </main>
+      <button type="submit">Daftar</button>
 
-    <script src="{% static 'js/loginsignup.js' %}"></script>
-  </body>
+      <p class="signup">
+        Sudah punya akun? <a href="{% url 'login' %}">Masuk</a>
+      </p>
+    </form>
+  </main>
+
+  <script src="{% static 'js/loginsignup.js' %}"></script>
+</body>
 </html>

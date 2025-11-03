@@ -1,0 +1,50 @@
+@startuml
+title Sequence Diagram "Signup"
+
+actor User as Actor
+boundary SignUpPage
+control SignUpController
+entity User as Entity 
+
+Actor -> SignUpPage: membuka halaman SignUp
+activate SignUpPage
+SignUpPage -> SignUpController: showForm()
+activate SignUpController
+deactivate SignUpController
+deactivate SignUpPage
+
+
+Actor -> SignUpPage: mengisi data (username, email, password, confirmPassword)
+activate SignUpPage
+SignUpPage -> SignUpController: submitData(username, email, password, confirmPassword)
+deactivate SignUpPage
+activate SignUpController
+
+SignUpController -> SignUpController: validateData()
+
+SignUpController -> Entity: checkUniqueEmail(email)
+activate Entity
+Entity --> SignUpController: result
+deactivate Entity
+
+
+alt dataValid
+    SignUpController -> Entity: saveUser(username, email, password)
+    activate Entity
+    Entity --> SignUpController: Success
+    deactivate Entity
+
+    SignUpController -> SignUpPage: redirectToLogin()
+    activate SignUpPage
+    SignUpPage -> Actor: tampilkan halaman Login
+    deactivate SignUpPage
+else dataInvalid
+    SignUpController -> SignUpPage: showError("Harap isi data yang valid")
+    activate SignUpPage
+    SignUpPage -> Actor: tampilkan error
+    deactivate SignUpPage
+end
+
+deactivate SignUpController
+
+@enduml

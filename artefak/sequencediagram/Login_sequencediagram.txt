@@ -1,0 +1,51 @@
+@startuml
+title Sequence Diagram "Login"
+
+actor User as Actor
+boundary LoginPage
+control AuthController
+entity User as Entity 
+
+
+Actor -> LoginPage: membuka halaman Login
+activate LoginPage
+LoginPage -> AuthController: showLoginForm()
+activate AuthController
+deactivate AuthController
+deactivate LoginPage
+
+
+Actor -> LoginPage: memasukkan email & password
+activate LoginPage
+LoginPage -> AuthController: submitLogin(email, password)
+deactivate LoginPage
+activate AuthController
+
+AuthController -> AuthController: validateInput()
+
+AuthController -> Entity: checkCredentials(email, password)
+activate Entity
+Entity --> AuthController: result
+deactivate Entity
+
+
+alt validCredentials
+    AuthController -> Entity: createSession(userId)
+    activate Entity
+    Entity --> AuthController: success
+    deactivate Entity
+
+    AuthController -> LoginPage: redirectToHomepage()
+    activate LoginPage
+    LoginPage -> Actor: tampilkan homepage
+    deactivate LoginPage
+else invalidCredentials
+    AuthController -> LoginPage: showError("Email atau password salah")
+    activate LoginPage
+    LoginPage -> Actor: tampilkan error
+    deactivate LoginPage
+end
+
+deactivate AuthController
+
+@enduml

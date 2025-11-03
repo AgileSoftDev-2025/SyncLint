@@ -1,0 +1,3 @@
+As a registered user, 
+I want to log in using my email and password, 
+so that I can access my workspace and project artefacts.

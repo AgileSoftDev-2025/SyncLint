@@ -1,0 +1,33 @@
+@startuml
+|#lightblue|u| User
+|s| Sistem SyncLint
+
+|u|
+start
+
+:Membuka halaman Login;
+|s|
+:Menampilkan halaman Login;
+
+repeat
+  |u|
+  :Mengisi email dan password;
+  :Menekan tombol "Login";
+
+  |s|
+  :Memvalidasi & memeriksa kredensial di database;
+
+backward:Menampilkan pesan "Email atau password tidak sesuai";
+repeat while (Kredensial Sesuai?) is (Tidak)
+->Ya;
+
+|s|
+if ("Remember Me" diaktifkan?) then (Ya)
+  :Menyimpan token sesi di perangkat;
+endif
+:Memberikan akses ke aplikasi;
+:Mengalihkan ke Homepage;
+stop
+
+@enduml
+

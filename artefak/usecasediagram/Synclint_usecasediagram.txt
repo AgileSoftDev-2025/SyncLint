@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+
+actor "User" as fc1
+rectangle Synclint {
+
+  usecase "Log Out" as UC11
+  usecase "Melihat Histori Laporan Hasil Perbandingan" as UC12
+  usecase "Membandingkan 2 Artefak berbeda jenis" as UC5
+  usecase "Memilih Artefak untuk dibandingkan" as UC7
+  usecase "Mengunggah Artefak" as UC6
+  usecase "Mengelola Workspace" as UC10
+  usecase "Membuat Workspace" as UC4
+  usecase "Kelola Profil" as UC3
+  usecase "Login" as UC2
+  usecase "Sign Up" as UC1
+
+
+}
+
+fc1 --> UC1
+fc1 --> UC2
+fc1 --> UC3
+fc1 --> UC4
+fc1 --> UC5
+fc1 --> UC6
+fc1 --> UC7
+fc1 --> UC10
+fc1 --> UC11
+fc1 --> UC12
+@enduml

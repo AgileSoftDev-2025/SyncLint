@@ -1,0 +1,29 @@
+@startuml
+|#lightblue|u| User
+|s| Sistem SyncLint
+|u|
+start
+:Membuka halaman Sign Up;
+
+|s|
+:Menampilkan halaman Sign Up;
+
+repeat
+  |u|
+  :Mengisi username, email, password, dan konfirmasi password;
+
+  |s|
+  :Melakukan validasi data;
+backward:Menampilkan pesan "harap isi data yang valid";
+repeat while (Data Valid?) is (Tidak)
+->Ya;
+
+|s|
+:Membuat akun baru;
+:Meng-**hash** password;
+:Menyimpan data user di database;
+:Mengalihkan user ke halaman Login;
+stop
+
+@enduml
+
