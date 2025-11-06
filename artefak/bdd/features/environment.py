@@ -1,7 +1,8 @@
 from selenium import webdriver
 from pages.login_page import LoginPage
 from pages.signup_page import SignupPage
-from SyncLint.artefak.bdd.pages.homepage_page import HomepagePage
+from pages.homepage_page import Homepage
+#from SyncLint.artefak.bdd.pages.homepage_page import HomepagePage
 
 def before_all(context):
     """Dipanggil sekali sebelum semua skenario dijalankan."""
@@ -17,7 +18,7 @@ def before_all(context):
     # Inisialisasi semua Page Objects di sini
     context.login_page = LoginPage(context.driver, context.base_url)
     context.signup_page = SignupPage(context.driver, context.base_url)
-    context.homepage_page = HomepagePage(context.driver, context.base_url)
+    context.homepage_page = Homepage(context.driver, context.base_url)
 
 def after_all(context):
     """Dipanggil sekali setelah semua skenario selesai."""

@@ -11,7 +11,7 @@ class SignupPage(BasePage):
     PASSWORD_INPUT = (By.NAME, "password1")
     CONFIRM_PASSWORD_INPUT = (By.NAME, "password2")
     SIGNUP_BUTTON = (By.XPATH, "//button[text()='Daftar']")
-    ERROR_MESSAGE_BLOCK = (By.CSS_SELECTOR, 'div[style*="color: #a94442"]') # Dari HTML signup.html
+    ERROR_MESSAGE_BLOCK = (By.CSS_SELECTOR, 'div[style*="color: #a94442"]') 
 
     def open_page(self):
         """Membuka halaman sign up."""

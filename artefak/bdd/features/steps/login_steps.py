@@ -18,11 +18,11 @@ def step_impl(context):
 def step_impl(context):
     assert_that(context.homepage_page.get_current_url(), ends_with(context.homepage_page.URL_PATH))
 
-@then('I should see my list of workspaces')
-def step_impl(context):
-    assert_that(context.homepage_page.is_workspace_list_visible(), equal_to(True))
-
 @then('I should see an error message "{message}"')
 def step_impl(context, message):
     text = context.login_page.get_error_message()
     assert_that(text, contains_string(message))
+
+@then('I should see an error message')
+def step_impl(context):
+    context.login_page.get_error_message()

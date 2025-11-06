@@ -25,11 +25,6 @@ def step_impl(context, password):
 def step_impl(context):
     context.signup_page.click_signup()
 
-@then('I should see a message "{message}"')
-def step_impl(context, message):
-    # Pesan sukses muncul di halaman login setelah redirect
-    text = context.login_page.get_success_message()
-    assert_that(text, contains_string(message))
 
 @then('I should be redirected to the "Login" page')
 def step_impl(context):

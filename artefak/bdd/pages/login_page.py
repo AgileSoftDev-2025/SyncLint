@@ -8,7 +8,7 @@ class LoginPage(BasePage):
     URL_PATH = "/api/login/"
     EMAIL_INPUT = (By.NAME, "username") 
     PASSWORD_INPUT = (By.NAME, "password")
-    LOGIN_BUTTON = (By.XPATH, "//button[text()='submit']")
+    LOGIN_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
     NON_FIELD_ERROR = (By.CSS_SELECTOR, 'div[style*="color: red"]') 
     SUCCESS_MESSAGE = (By.CSS_SELECTOR, '.messages li') 
 
