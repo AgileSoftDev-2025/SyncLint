@@ -1,154 +1,169 @@
+# File: workspace_steps.py
 from behave import given, when, then
-
-# --- Mock System Setup ---
-
-class MockSystem:
-    """A simple simulation of the application's business logic and state."""
-    def __init__(self):
-        # Existing data in the 'database'
-        self.workspaces = {"Project Beta", "Old Report", "Project X", "Project Z", "Obsolete Project"}
-        self.current_view = "Workspace List"
-        self.error_message = ""
-
-    def create_workspace(self, name):
-        """Creates a workspace, checking for name duplication."""
-        if name in self.workspaces:
-            self.error_message = "Workspace name already in use, please choose another name"
-            return False
-        else:
-            self.workspaces.add(name)
-            return True
-
-    def rename_workspace(self, old_name, new_name):
-        """Renames a workspace, checking for duplication."""
-        # Check if the new name is already used by another workspace
-        if new_name in self.workspaces and new_name != old_name:
-            self.error_message = "That name is already used by another one of your workspaces"
-            return False
-        
-        if old_name in self.workspaces:
-            self.workspaces.remove(old_name)
-            self.workspaces.add(new_name)
-            return True
-        return False
-
-    def delete_workspace(self, name):
-        """Deletes a workspace."""
-        if name in self.workspaces:
-            self.workspaces.remove(name)
-            self.current_view = "Workspace List"
-            return True
-        return False
+from hamcrest import assert_that, equal_to, contains_string, not_
 
 # --- GIVEN Steps ---
+# Step "Given the User is logged in..." sudah di-handle oleh Background di .feature
 
-@given('the User is logged in to the SyncLint application and viewing the Workspace list')
+@given('I am on the homepage')
 def step_impl(context):
-    context.system = MockSystem()
-    context.new_workspace_name = None
+    # 'Background' sudah login, kita hanya perlu memastikan ada di homepage
+    # Jika login tidak otomatis redirect, tambahkan navigasi di sini
+    # context.homepage_page.open_page()
+    pass # Asumsi login sudah redirect ke homepage
 
 @given('a Workspace named "{name}" already exists in the system')
 def step_impl(context, name):
-    context.system = MockSystem()
-    context.system.workspaces.add(name)
+    # Gunakan helper dari Page Object untuk memastikan data ada
+    context.homepage_page.create_workspace_if_not_exists(name)
 
 @given('the User is logged in and viewing a Workspace named "{name}"')
 def step_impl(context, name):
-    context.system = MockSystem()
-    context.initial_workspace_name = name
+    # Asumsi: "viewing" berarti sudah klik workspace itu dan pindah halaman
+    # 1. Pastikan ada
+    context.homepage_page.create_workspace_if_not_exists(name)
+    # 2. Klik untuk membukanya (Implementasikan method 'click_workspace' jika perlu)
+    # context.homepage_page.click_workspace(name)
+    context.workspace_name = name # Simpan nama untuk verifikasi
 
 @given('the User owns two Workspaces, namely "{name1}" and "{name2}"')
 def step_impl(context, name1, name2):
-    context.system = MockSystem()
-    context.system.workspaces = {name1, name2}
-    context.initial_workspace_name = name2 # Target for renaming/editing
+    context.homepage_page.create_workspace_if_not_exists(name1)
+    context.homepage_page.create_workspace_if_not_exists(name2)
+    context.workspace_name = name2 # Target untuk di-rename/edit
 
 @given('the User owns a Workspace named "{name}" which contains artifacts')
 def step_impl(context, name):
-    context.system = MockSystem()
-    context.delete_target_name = name
+    context.homepage_page.create_workspace_if_not_exists(name)
+    context.workspace_name = name # Target untuk dihapus
 
 
 # --- WHEN Steps (User Actions) ---
 
 @when('the User clicks the "Create Workspace" button, fills the form with the Name "{name}"')
 def step_impl(context, name):
-    context.new_workspace_name = name
+    context.homepage_page.click_create_workspace()
+    context.homepage_page.fill_workspace_name(name)
 
 @when('the User clicks the "Create" button')
 def step_impl(context):
-    context.success = context.system.create_workspace(context.new_workspace_name)
+    context.homepage_page.click_create_confirm()
 
 @when('the User attempts to create a new Workspace named "{name}"')
 def step_impl(context, name):
-    context.success = context.system.create_workspace(name)
-    context.attempted_name = name
+    # Gabungan dari dua step di atas
+    context.homepage_page.click_create_workspace()
+    context.homepage_page.fill_workspace_name(name)
+    context.homepage_page.click_create_confirm()
 
-@when('the User selects the 3-dots menu, clicks the "rename" option')
-def step_impl(context):
-    pass # UI simulation: open rename dialog
+@when('the User selects the 3-dots menu for "{name}", clicks the "rename" option')
+def step_impl(context, name):
+    context.workspace_name = name # Simpan nama lama
+    context.homepage_page.click_workspace_menu(name)
+    context.homepage_page.click_rename_option()
 
 @when('the User enters the new name "{new_name}"')
 def step_impl(context, new_name):
-    context.renamed_to = new_name
-    # Rename action is simulated here
-    context.success = context.system.rename_workspace(context.initial_workspace_name, new_name)
+    context.new_workspace_name = new_name # Simpan nama baru
+    context.homepage_page.fill_workspace_name(new_name) # Asumsi locator input sama
 
 @when('the User clicks the "Rename" button')
 def step_impl(context):
-    pass # Action already performed in the previous step
+    context.homepage_page.click_rename_confirm()
 
 @when('the User selects the "Edit Name" option for "{name}"')
 def step_impl(context, name):
-    context.initial_workspace_name = name # Set the correct rename target
+    # Step ini sama dengan "selects 3-dots menu... clicks rename"
+    context.workspace_name = name
+    context.homepage_page.click_workspace_menu(name)
+    context.homepage_page.click_rename_option()
 
 @when('the User attempts to change its name to "{new_name}"')
 def step_impl(context, new_name):
-    # Use the target set in the previous step
-    context.renamed_to = new_name
-    context.success = context.system.rename_workspace(context.initial_workspace_name, new_name)
+    # Gabungan dari "enter new name" dan "click rename"
+    context.new_workspace_name = new_name
+    context.homepage_page.fill_workspace_name(new_name)
+    context.homepage_page.click_rename_confirm()
+
+@when('the User clicks the "Ganti Nama" button')
+def step_impl(context):
+    context.homepage_page.click_rename_confirm()
+
+@when('the User clicks the "Hapus" button')
+def step_impl(context):
+    context.homepage_page.click_delete_confirm()
 
 @when('the User selects the "Delete Workspace" option for "{name}"')
 def step_impl(context, name):
-    context.delete_target_name = name
+    context.workspace_name = name
+    context.homepage_page.click_workspace_menu(name)
+    context.homepage_page.click_delete_option()
 
 @when('the User confirms the deletion in the subsequent dialog')
 def step_impl(context):
-    context.success = context.system.delete_workspace(context.delete_target_name)
+    context.homepage_page.click_delete_confirm()
 
 
 # --- THEN Steps (Verification) ---
 
 @then('the workspace creation form/modal is closed')
 def step_impl(context):
-    assert context.success is True, f"Workspace creation failed: {context.system.error_message}"
+    assert_that(
+        context.homepage_page.is_create_modal_closed(), 
+        equal_to(True),
+        "Modal create workspace tidak tertutup"
+    )
 
 @then('a new Workspace named "{name}" is displayed in the Workspace list')
 def step_impl(context, name):
-    assert name in context.system.workspaces, f"Workspace '{name}' was not found in the list."
+    assert_that(
+        context.homepage_page.is_workspace_visible(name),
+        equal_to(True),
+        f"Workspace '{name}' tidak ditemukan di list"
+    )
 
 @then('the system displays the error message "{error_message}"')
 def step_impl(context, error_message):
-    assert context.success is False, "The system was expected to fail, but succeeded."
-    assert context.system.error_message == error_message, \
-        f"Incorrect error message. Expected: '{error_message}', Received: '{context.system.error_message}'"
+    text = context.homepage_page.get_form_error_message()
+    assert_that(text, contains_string(error_message))
 
 @then('the Workspace name displayed on the screen changes to "{new_name}"')
 def step_impl(context, new_name):
-    assert context.success is True, f"Rename failed: {context.system.error_message}"
-    assert new_name in context.system.workspaces, f"New name '{new_name}' not found."
-    assert context.initial_workspace_name not in context.system.workspaces, f"Old name '{context.initial_workspace_name}' is still present."
+    # Asumsi ini mengecek judul di halaman detail
+    # Jika masih di list, gunakan step "is reflected"
+    
+    # Verifikasi nama baru ada
+    assert_that(
+        context.homepage_page.is_workspace_visible(new_name),
+        equal_to(True),
+        f"Nama baru '{new_name}' tidak ditemukan"
+    )
+    # Verifikasi nama lama hilang
+    assert_that(
+        context.homepage_page.is_workspace_visible(context.workspace_name), # 'workspace_name' dari step 'When'
+        equal_to(False),
+        f"Nama lama '{context.workspace_name}' masih ada"
+    )
 
 @then('the name "{new_name}" is reflected in the main Workspace list')
 def step_impl(context, new_name):
-    assert new_name in context.system.workspaces, f"New name '{new_name}' is not reflected in the main list."
+    assert_that(
+        context.homepage_page.is_workspace_visible(new_name),
+        equal_to(True),
+        f"Nama baru '{new_name}' tidak ditemukan di list utama"
+    )
 
 @then('the system redirects the User to the main Workspace list/dashboard')
 def step_impl(context):
-    assert context.success is True, "Deletion failed."
-    assert context.system.current_view == "Workspace List", "User was not redirected to the dashboard."
+    # Cek URL
+    current_url = context.homepage_page.get_current_url()
+    base_url = context.base_url + context.homepage_page.URL_PATH
+    assert_that(current_url, equal_to(base_url), "User tidak di-redirect ke homepage")
 
 @then('"{name}" is no longer visible in the Workspaces list')
 def step_impl(context, name):
-    assert context.success is True, "Deletion failed."
-    assert name not in context.system.workspaces, f"Workspace '{name}' is still visible in the list."
+    assert_that(
+        context.homepage_page.is_workspace_not_visible(name),
+        equal_to(True),
+        f"Workspace '{name}' masih terlihat di list"
+    )
