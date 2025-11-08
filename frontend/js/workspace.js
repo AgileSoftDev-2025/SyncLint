@@ -1,4 +1,4 @@
-// File: frontend/js/workspace.js (TERBARU)
+// File: frontend/js/workspace.js (VERSI FINAL - TERHUBUNG KE API)
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -8,23 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // State untuk mengontrol mode seleksi artefak
     let isSelectingArtifacts = false;
-
-    // State untuk data (nantinya akan diisi dari API)
-    // Kita akan tambahkan artefak baru ke array ini setelah unggah
-    const artifactsData = [
-        { name: 'ERD_Akademik.xml', date: '15/11/2025', type: 'xml' },
-        { name: 'Use_Case_Pendaftaran_Login.txt', date: '15/11/2025', type: 'txt' },
-        { name: 'Skema_DB_Pengguna.sql', date: '15/11/2025', type: 'sql' },
-        { name: 'Konfigurasi_Aplikasi.xml', date: '16/11/2025', type: 'xml' },
-        { name: 'Log_Server_20251116.txt', date: '16/11/2025', type: 'txt' },
-        { name: 'Tabel_Produk.sql', date: '17/11/2025', type: 'sql' }
-    ];
-
-    const historyData = [
-        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-        { text: 'Histori Laporan Hasil Perbandingan...', date: '20 Agustus 2025' },
-    ];
+    
+    // HAPUS data dummy 'artifactsData' dan 'historyData'
+    // Data akan diambil langsung dari API
 
     // State untuk modal
     let currentFile = null;
@@ -46,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Elemen Modal
     const modal = document.getElementById('uploadModal');
     const closeModalBtn = modal.querySelector('.close-btn');
-    const uploadTriggerGrid = document.getElementById('upload-triggers') || document.querySelector('.upload-section'); // Ambil grid tombol
-    const submitUploadBtn = modal.querySelector('.upload-btn'); // Tombol "Unggah Artefak" di modal
+    const uploadTriggerGrid = document.getElementById('upload-triggers') || document.querySelector('.upload-section');
+    const submitUploadBtn = modal.querySelector('.upload-btn');
     
     // Elemen Form Modal
     const modalTitle = modal.querySelector('#modalTitle');
@@ -55,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = modal.querySelector('.file-input');
     const fileSelectLink = modal.querySelector('.file-select-link');
     const textInput = modal.querySelector('#artifactText');
-    const artifactNameInput = modal.querySelector('#artifactNameInput'); // Ganti dari 'artifactNamePreview'
+    const artifactNameInput = modal.querySelector('#artifactNameInput');
 
     // =============================================
     // =============== EVENT LISTENERS ===============
@@ -65,25 +51,22 @@ document.addEventListener("DOMContentLoaded", () => {
         selectBtn.addEventListener('click', toggleArtifactSelection);
     }
     
-    // Pasang listener di grid tombol, bukan di tiap tombol
     if (uploadTriggerGrid) {
         uploadTriggerGrid.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON' && e.target.dataset.type) {
-                openUploadModal(e); // Panggil fungsi dengan event
+                openUploadModal(e);
             }
         });
     }
 
-    // Event listener untuk elemen di dalam modal
     if (modal) {
         closeModalBtn.addEventListener('click', closeUploadModal);
-        submitUploadBtn.addEventListener('click', handleSubmitUpload); // Listener untuk submit
+        submitUploadBtn.addEventListener('click', handleSubmitUpload);
 
         window.addEventListener('click', (event) => {
             if (event.target === modal) closeUploadModal();
         });
         
-        // Fungsionalitas drag-and-drop dan pilih file
         fileSelectLink.addEventListener('click', (e) => {
             e.preventDefault();
             fileInput.click();
@@ -97,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fileDropArea.addEventListener('dragleave', () => fileDropArea.classList.remove('active'));
         fileDropArea.addEventListener('drop', handleFileDrop);
 
-        // Jika mengetik di textarea, hapus file
         textInput.addEventListener('input', () => {
              if (textInput.value.trim() !== '') {
                 currentFile = null;
@@ -113,91 +95,100 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================== FUNGSI ===================
     // =============================================
     
-    /**
-     * Mengaktifkan atau menonaktifkan mode seleksi artefak.
-     */
     function toggleArtifactSelection() {
         isSelectingArtifacts = !isSelectingArtifacts;
-        renderArtifacts(); // Render ulang artefak untuk menampilkan/menyembunyikan checkbox
+        // Kita perlu fetch ulang data untuk render checkbox
+        fetchArtifacts(); 
     }
 
     /**
-     * Menampilkan daftar artefak di UI.
+     * (DIPERBARUI) Menampilkan daftar artefak di UI.
+     * Sekarang menerima 'artifacts' sebagai parameter.
      */
-    function renderArtifacts() {
+    function renderArtifacts(artifacts = []) {
         if (!artifactsGrid) return;
         artifactsGrid.innerHTML = ''; // Kosongkan grid sebelum mengisi ulang
 
-        artifactsData.forEach((artifact, index) => {
+        artifacts.forEach((artifact, index) => {
             const card = document.createElement('div');
             card.className = 'artifact-card';
-            const icon = getIconForType(artifact.type);
-            const checkboxHTML = isSelectingArtifacts ? `<input type="checkbox" class="artifact-checkbox" data-index="${index}">` : '';
+            // Gunakan 'artifact.type' (dari API)
+            const icon = getIconForType(artifact.type); 
+            const checkboxHTML = isSelectingArtifacts ? `<input type="checkbox" class="artifact-checkbox" data-id="${artifact.id}">` : '';
+
+            // Buat link download
+            const downloadLink = `
+                <a href="${artifact.file_url}" download="${artifact.name}" class="artifact-download-link">
+                    <div class="icon-wrapper">
+                        <div class="icon-placeholder">${icon}</div>
+                        <i class="fas fa-download download-icon"></i> </div>
+                    <p>${artifact.name}</p>
+                </a>
+            `;
 
             card.innerHTML = `
                 ${checkboxHTML}
-                <div class="icon-placeholder">${icon}</div>
-                <p>${artifact.name}</p>
-                <p class="date">${artifact.date}</p>
+                ${downloadLink}
             `;
             artifactsGrid.appendChild(card);
         });
     }
 
     /**
-     * Menampilkan daftar riwayat perbandingan di UI.
+     * (FUNGSI BARU) Mengambil daftar artefak dari backend
      */
-    function renderHistory() {
-        if (!historyList) return;
-        historyList.innerHTML = '';
+    async function fetchArtifacts() {
+        if (!workspaceId) return; // Berhenti jika ID workspace tidak ada
 
-        historyData.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<span>${item.text}</span><span>${item.date}</span>`;
-            historyList.appendChild(listItem);
-        });
+        try {
+            // Panggil endpoint API baru yang kita buat di views.py
+            const response = await fetch(`/api/workspace/${workspaceId}/artefaks/`);
+            if (!response.ok) {
+                throw new Error('Gagal mengambil data artefak dari server.');
+            }
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                renderArtifacts(data.artefaks); // Panggil render dengan data API
+            } else {
+                console.error('Error dari API:', data.errors);
+            }
+        } catch (error) {
+            console.error('Gagal fetch artefak:', error);
+            artifactsGrid.innerHTML = '<p class="error">Gagal memuat artefak.</p>';
+        }
+    }
+
+    // (Fungsi renderHistory tetap sama, tapi tidak kita panggil lagi)
+    function renderHistory() {
+        // ... (data dummy histori) ...
     }
     
-    /**
-     * Membuka modal pop-up dan MENGINGAT tipe artefak.
-     */
     function openUploadModal(e) {
-        // Simpan tipe artefak dari tombol yang diklik
         currentArtifactType = e.target.dataset.type;
-        // Set judul modal
         modalTitle.textContent = `Unggah ${e.target.textContent} Baru`;
         
         resetModalForm();
         modal.style.display = 'flex';
     }
 
-    /**
-     * Menutup modal pop-up dan mereset isinya.
-     */
     function closeUploadModal() {
         modal.style.display = 'none';
         resetModalForm();
     }
 
-    /**
-     * Mereset form di dalam modal
-     */
     function resetModalForm() {
         currentFile = null;
-        // HAPUS BARIS DI ATAS
         textInput.value = '';
         artifactNameInput.value = '';
-        fileInput.value = null; // Reset input file
+        fileInput.value = null;
     }
     
-    /**
-     * Menangani file yang dipilih melalui dialog atau di-drop.
-     */
     function handleFile(file) {
         if (file) {
             currentFile = file;
-            artifactNameInput.value = file.name; // Otomatis isi nama file
-            textInput.value = ''; // Hapus input teks jika file dipilih
+            artifactNameInput.value = file.name;
+            textInput.value = '';
             console.log('File dipilih:', currentFile);
         }
     }
@@ -213,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Fungsi INTI: Mengirim data ke backend API.
+     * (DIPERBARUI) Fungsi INTI: Mengirim data ke backend API.
      */
     async function handleSubmitUpload() {
         const name = artifactNameInput.value.trim();
@@ -237,10 +228,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3. Tentukan file atau teks
         if (currentFile) {
-            // Jika pengguna memilih file
             formData.append('file', currentFile, name);
         } else if (textContent) {
-            // Jika pengguna mengetik di textarea, buat file dari teks
             const textBlob = new Blob([textContent], { type: 'text/plain' });
             formData.append('file', textBlob, name);
         }
@@ -253,28 +242,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch('/api/artefak/upload/', {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken'), // Penting untuk keamanan Django
+                    'X-CSRFToken': getCookie('csrftoken'),
                 },
                 body: formData,
             });
 
             const data = await response.json();
 
+            // (DIPERBARUI) Logika setelah sukses
             if (response.ok) { // Status 201 CREATED
                 alert('Unggah berhasil!');
                 
-                // Tambahkan artefak baru ke data
-                const newArtifact = data.artefak;
-                artifactsData.push({
-                    name: newArtifact.name,
-                    date: new Date().toLocaleDateString('id-ID'), // Buat tanggal hari ini
-                    type: newArtifact.type.toLowerCase().split('_')[0] // 'SQL_DDL' -> 'sql'
-                });
-                renderArtifacts(); // Panggil fungsi render Anda
+                // Panggil fetchArtifacts() untuk mengambil daftar terbaru
+                // dari database, alih-alih push ke array dummy.
+                fetchArtifacts(); 
                 
                 closeUploadModal();
             } else {
-                // Tampilkan error dari backend
                 alert(`Error: ${data.errors || 'Unggah gagal.'}`);
             }
 
@@ -289,21 +273,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /**
-     * Mengembalikan ikon emoji berdasarkan tipe file.
+     * (DIPERBARUI) Mengembalikan ikon berdasarkan TIPE API
      */
     function getIconForType(type) {
-        // Disederhanakan agar cocok dengan data dummy dan data baru
-        const typeSimple = type.toLowerCase();
-        if (typeSimple.includes('xml') || typeSimple.includes('bpmn') || typeSimple.includes('diagram')) {
-            return '&lt;/&gt;';
+        if (!type) return '❔'; // Pengaman jika tipe null
+        const typeUpper = type.toUpperCase();
+
+        if (typeUpper.includes('DIAGRAM') || typeUpper.includes('BPMN') || typeUpper.includes('XMI')) {
+            return '&lt;/&gt;'; // Ikon untuk diagram
         }
-        if (typeSimple.includes('txt') || typeSimple.includes('spec')) {
-            return '📄';
+        if (typeUpper.includes('SQL')) {
+            return '🗄️'; // Ikon untuk SQL
         }
-        if (typeSimple.includes('sql')) {
-            return '🗄️';
+        if (typeUpper.includes('SPEC') || typeUpper.includes('WIREFRAME') || typeUpper.includes('TXT')) {
+            return '📄'; // Ikon untuk dokumen teks
         }
-        return '❔';
+        return '❔'; // Default
     }
 
     /**
@@ -329,15 +314,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // =============================================
     
     /**
-     * Menjalankan semua fungsi yang diperlukan saat halaman pertama kali dimuat.
+     * (DIPERBARUI) Menjalankan fungsi yang diperlukan saat halaman dimuat.
      */
     function initializePage() {
         if (!workspaceId) {
             console.error('FATAL: Workspace ID tidak ditemukan. Pastikan Anda menambahkan data-workspace-id ke <body>.');
             alert('Error: Gagal memuat workspace. ID tidak ditemukan.');
         }
-        renderArtifacts();
-        renderHistory();
+        fetchArtifacts(); // Panggil fungsi fetch baru
+        // renderHistory(); // Biarkan dummy history, atau Anda bisa hapus
     }
     
     initializePage();

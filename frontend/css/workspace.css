@@ -495,3 +495,56 @@ body {
 .helper-text, .artifact-name-display {
     font-size: 14px; /* DITAMBAHKAN: Ukuran untuk teks bantuan */
 }
+
+/*
+ * PERBAIKAN UNTUK LINK DOWNLOAD ARTEFAK
+ */
+.artifact-download-link {
+    text-decoration: none;  /* Hapus garis bawah */
+    color: inherit;         /* Gunakan warna teks normal (tidak biru) */
+    display: flex;          /* Jaga layout flex */
+    flex-direction: column; /* Jaga layout tumpuk (ikon di atas teks) */
+    align-items: center;    /* Jaga agar tetap di tengah */
+    gap: 8px;               /* Jaga jarak antara ikon dan teks */
+}
+
+.artifact-card {
+    /* Pastikan padding ada di kartu, bukan di link */
+    padding: 16px;
+}
+
+/*
+ * Gaya untuk Wrapper Ikon dan Ikon Download
+ */
+.icon-wrapper {
+    position: relative; /* Penting untuk memposisikan ikon download */
+    width: 60px; /* Sesuaikan dengan ukuran ikon placeholder Anda */
+    height: 60px; /* Sesuaikan dengan ukuran ikon placeholder Anda */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px; /* Jarak antara ikon dan teks nama artefak */
+}
+
+.download-icon {
+    position: absolute;
+    bottom: -5px; /* Sesuaikan posisi vertikal */
+    right: -5px; /* Sesuaikan posisi horizontal */
+    font-size: 14px; /* Ukuran ikon download */
+    color: #6a0dad; /* Warna ikon download (misalnya, ungu) */
+    background-color: white; /* Latar belakang agar ikon lebih menonjol */
+    border-radius: 50%; /* Membuatnya bulat */
+    padding: 3px; /* Sedikit padding di sekitar ikon */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Sedikit bayangan */
+    z-index: 10; /* Pastikan di atas ikon utama */
+}
+
+/* Sesuaikan ukuran ikon utama agar tidak terlalu besar di dalam wrapper */
+.icon-placeholder {
+    font-size: 40px; /* Contoh ukuran, sesuaikan */
+    display: flex; /* Untuk centering ikon dalam placeholder */
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Agar memenuhi wrapper */
+    height: 100%; /* Agar memenuhi wrapper */
+}

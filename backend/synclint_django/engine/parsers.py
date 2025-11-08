@@ -1,4 +1,4 @@
-# File: engine/parsers.py (VERSI FINAL LENGKAP - PERBAIKAN SQL & WIREFRAME)
+# File: engine/parsers.py (VERSI FINAL LENGKAP - PERBAIKAN SEMUA PARSER)
 
 import json
 import sqlparse 
@@ -21,6 +21,7 @@ def parse_artifact_file(artefak_instance):
     try:
         read_mode = 'r'
         encoding = 'utf-8'
+        # Tipe file XML/XMI dibaca sebagai binary ('rb')
         if artifact_type in ['BPMN', 'CLASS_DIAGRAM', 'USE_CASE_DIAGRAM', 'ACTIVITY_DIAGRAM', 'SEQUENCE_DIAGRAM']:
              read_mode = 'rb'
              encoding = None
@@ -72,89 +73,83 @@ def parse_artifact_file(artefak_instance):
 # -----------------------------------------------------------------
 def parse_sql(content):
     """
-    Mem-parsing skrip SQL DDL dan mengekstrak tabel, kolom, dan constraint.
-    Sesuai dengan Skema JSON Standar Anda (Appendix C.1.8).
+    Mem-parsing skrip SQL DDL. Versi ini jauh lebih sederhana dan
+    menggunakan string splitting, bukan token.
     """
-    parsed_json = {
-        "artifact_type": "SQL_DDL",
-        "tables": []
-    }
-    
+    parsed_json = {"artifact_type": "SQL_DDL", "tables": []}
     statements = sqlparse.parse(content)
-    
+
     for stmt in statements:
-        if stmt.get_type() == 'CREATE':
-            table_info = {"name": None, "columns": [], "constraints": {}}
+        if stmt.get_type() != 'CREATE':
+            continue
+
+        stmt_str = str(stmt).upper()
+        if 'TABLE' not in stmt_str:
+            continue
             
-            table_name_token = None
-            tokens_clean = [t for t in stmt.tokens if not t.is_whitespace]
-
-            for i, token in enumerate(tokens_clean):
-                if token.normalized == 'TABLE':
-                    if i + 1 < len(tokens_clean):
-                        table_name_token = tokens_clean[i + 1]
-                    break
+        try:
+            # Dapatkan nama tabel
+            table_name = re.search(r'TABLE\s+`?(\w+)`?', stmt_str).group(1)
+            table_info = {"name": table_name, "columns": [], "constraints": {}}
             
-            if table_name_token:
-                table_info["name"] = table_name_token.get_real_name()
+            # Dapatkan semua di antara ( dan )
+            columns_str = re.search(r'\(([\s\S]*)\)', str(stmt)).group(1)
             
-            paren = None
-            for tok in tokens_clean:
-                if tok.is_group:
-                    paren = tok
-                    break
-            
-            if paren:
-                col_definitions = paren.get_sublists()
-                            
-                for col_def in col_definitions:
+            # Pisahkan per baris
+            for line in columns_str.split('\n'):
+                line = line.strip().strip(',')
+                if not line:
+                    continue
 
-                    col_text = col_def.value.strip()
-                    first_word = col_text.split()[0].upper()
+                line_upper = line.upper()
 
-                    # Abaikan constraint level tabel sepenuhnya
-                    if first_word in ("PRIMARY", "FOREIGN", "UNIQUE", "CONSTRAINT", "CHECK"):
-                        continue
-
-                    tokens = [t for t in col_def.tokens if not t.is_whitespace]
-
-                    if len(tokens) < 2:
-                        continue
-
-                    col_name = tokens[0].value
-                    data_type = tokens[1].value
-
-                    col_data = {
-                        "name": col_name,
-                        "data_type": data_type,
-                        "constraints": {}
-                    }
-
-                    text_upper = col_text.upper()
-
-                    if "PRIMARY KEY" in text_upper:
-                        col_data["constraints"]["primary_key"] = True
-                    if "NOT NULL" in text_upper:
-                        col_data["constraints"]["not_null"] = True
-                    if "UNIQUE" in text_upper:
-                        col_data["constraints"]["unique"] = True
-
-                    table_info["columns"].append(col_data)
-
-            if table_info["name"]:
-                parsed_json["tables"].append(table_info)
+                # Lewati constraint level tabel
+                if line_upper.startswith('PRIMARY KEY') or \
+                   line_upper.startswith('FOREIGN KEY') or \
+                   line_upper.startswith('UNIQUE') or \
+                   line_upper.startswith('CONSTRAINT') or \
+                   line_upper.startswith('CHECK'):
+                    continue
                 
+                # Ini adalah definisi kolom
+                parts = line.split()
+                if len(parts) < 2:
+                    continue
+                    
+                col_name = parts[0].strip('`')
+                col_type = parts[1]
+                
+                # Tangani tipe data seperti VARCHAR(100)
+                if 'VARCHAR' in col_type:
+                    col_type = re.search(r'VARCHAR\(\d+\)', line_upper, re.IGNORECASE).group(0)
+
+                col_data = {
+                    "name": col_name,
+                    "data_type": col_type,
+                    "constraints": {}
+                }
+
+                if 'PRIMARY KEY' in line_upper:
+                    col_data["constraints"]["primary_key"] = True
+                if 'NOT NULL' in line_upper:
+                    col_data["constraints"]["not_null"] = True
+                if 'UNIQUE' in line_upper:
+                    col_data["constraints"]["unique"] = True
+                
+                table_info["columns"].append(col_data)
+                
+            parsed_json["tables"].append(table_info)
+
+        except Exception as e:
+            print(f"Gagal mem-parsing statement SQL: {e}")
+            
     return parsed_json
 
 # -----------------------------------------------------------------
-# PARSER SPESIFIK (CLASS DIAGRAM)
+# PARSER SPESIFIK (CLASS DIAGRAM) - PERBAIKAN NAMESPACE
 # -----------------------------------------------------------------
 def parse_class_diagram(xml_content):
-    parsed_json = {
-        "artifact_type": "CLASS_DIAGRAM",
-        "classes": [],
-        "relationships": []
-    }
+    parsed_json = {"artifact_type": "CLASS_DIAGRAM", "classes": [], "relationships": []}
     try:
         ns = {'uml': 'http://www.omg.org/spec/UML/20131001',
               'xmi': 'http://www.omg.org/spec/XMI/20131001'}
@@ -164,20 +159,20 @@ def parse_class_diagram(xml_content):
         root = ET.fromstring(xml_content)
         
         class_id_map = {}
-        for pkg_element in root.xpath('//packagedElement[@uml:type="uml:Class"]', namespaces=ns):
+        for pkg_element in root.xpath('//packagedElement[@xmi:type="uml:Class"]', namespaces=ns):
             class_id = pkg_element.get(f'{{{ns["xmi"]}}}id')
             class_name = pkg_element.get('name')
             if class_id:
                 class_id_map[class_id] = class_name
 
-        for pkg_element in root.xpath('//packagedElement[@uml:type="uml:Class"]', namespaces=ns):
+        for pkg_element in root.xpath('//packagedElement[@xmi:type="uml:Class"]', namespaces=ns):
             class_data = {"name": pkg_element.get('name'), "attributes": [], "methods": []}
-            for attr in pkg_element.xpath('./ownedAttribute[@uml:type="uml:Property"]', namespaces=ns):
+            for attr in pkg_element.xpath('./ownedAttribute[@xmi:type="uml:Property"]', namespaces=ns):
                 attr_data = {"name": attr.get('name'), "visibility": attr.get('visibility', 'public')}
                 type_element = attr.find('type', namespaces=ns)
                 attr_data["type"] = type_element.get('href') if type_element is not None else "undefined"
                 class_data["attributes"].append(attr_data)
-            for op in pkg_element.xpath('./ownedOperation[@uml:type="uml:Operation"]', namespaces=ns):
+            for op in pkg_element.xpath('./ownedOperation[@xmi:type="uml:Operation"]', namespaces=ns):
                 op_data = {"name": op.get('name'), "visibility": op.get('visibility', 'public'), "parameters": []}
                 for param in op.xpath('./ownedParameter', namespaces=ns):
                     param_data = {"name": param.get('name'), "direction": param.get('direction', 'in')}
@@ -188,7 +183,7 @@ def parse_class_diagram(xml_content):
                 class_data["methods"].append(op_data)
             parsed_json["classes"].append(class_data)
             
-        for assoc in root.xpath('//packagedElement[@uml:type="uml:Association"]', namespaces=ns):
+        for assoc in root.xpath('//packagedElement[@xmi:type="uml:Association"]', namespaces=ns):
             ends = assoc.xpath('./ownedEnd', namespaces=ns)
             if len(ends) == 2:
                 try:
@@ -211,7 +206,7 @@ def parse_class_diagram(xml_content):
         return {"error": "Gagal memproses Class Diagram.", "detail": str(e)}
 
 # -----------------------------------------------------------------
-# PARSER SPESIFIK (BPMN)
+# PARSER SPESIFIK (BPMN) - PERBAIKAN NAMESPACE
 # -----------------------------------------------------------------
 def parse_bpmn(xml_content):
     parsed_json = {"artifact_type": "BPMN", "processes": []}
@@ -219,15 +214,20 @@ def parse_bpmn(xml_content):
         if xml_content.startswith(b'\xef\xbb\xbf'):
             xml_content = xml_content[3:]
         root = ET.fromstring(xml_content)
+        
+        # Coba namespace ber-prefix
         ns_prefixed = {'bpmn': 'http://www.omg.org/spec/BPMN/20100524/MODEL'}
         processes = root.xpath('//bpmn:process', namespaces=ns_prefixed)
         ns_prefix_xpath = "bpmn:"
         ns_to_use = ns_prefixed
+        
+        # Jika tidak ditemukan, coba namespace default
         if not processes:
             ns_default = {'': 'http://www.omg.org/spec/BPMN/20100524/MODEL'}
             processes = root.xpath('//:process', namespaces=ns_default)
             ns_prefix_xpath = ":"
             ns_to_use = ns_default
+
         for process in processes:
             process_data = {"id": process.get('id'), "name": process.get('name', 'Process'), "pools": [], "lanes": [], "flow_objects": [], "sequence_flows": []}
             for lane_set in process.xpath(f'./{ns_prefix_xpath}laneSet', namespaces=ns_to_use):
@@ -250,18 +250,19 @@ def parse_bpmn(xml_content):
         return {"error": "Gagal memproses file BPMN.", "detail": str(e)}
     
 # -----------------------------------------------------------------
-# PARSER SPESIFIK (USE CASE DIAGRAM)
+# PARSER SPESIFIK (USE CASE DIAGRAM) - PERBAIKAN NAMESPACE
 # -----------------------------------------------------------------
 def parse_use_case_diagram(xml_content):
     parsed_json = {"artifact_type": "USE_CASE_DIAGRAM", "actors": [], "use_cases": [], "relationships": []}
     try:
-        ns = {'uml': 'http://www.omg.org/spec/UML/20131001'}
+        ns = {'uml': 'http://www.omg.org/spec/UML/20131001',
+              'xmi': 'http://www.omg.org/spec/XMI/20131001'}
         if xml_content.startswith(b'\xef\xbb\xbf'):
             xml_content = xml_content[3:]
         root = ET.fromstring(xml_content)
-        for actor in root.xpath('//packagedElement[@uml:type="uml:Actor"]', namespaces=ns):
+        for actor in root.xpath('//packagedElement[@xmi:type="uml:Actor"]', namespaces=ns):
             parsed_json["actors"].append({"name": actor.get('name')})
-        for uc in root.xpath('//packagedElement[@uml:type="uml:UseCase"]', namespaces=ns):
+        for uc in root.xpath('//packagedElement[@xmi:type="uml:UseCase"]', namespaces=ns):
             parsed_json["use_cases"].append({"name": uc.get('name')})
         return parsed_json
     except ET.ParseError as e:
@@ -272,7 +273,7 @@ def parse_use_case_diagram(xml_content):
         return {"error": "Gagal memproses Use Case Diagram.", "detail": str(e)}
 
 # -----------------------------------------------------------------
-# PARSER SPESIFIK (ACTIVITY DIAGRAM)
+# PARSER SPESIFIK (ACTIVITY DIAGRAM) - PERBAIKAN NAMESPACE
 # -----------------------------------------------------------------
 def parse_activity_diagram(xml_content):
     parsed_json = {"artifact_type": "UML_Activity_Diagram", "activities": []}
@@ -282,7 +283,7 @@ def parse_activity_diagram(xml_content):
         if xml_content.startswith(b'\xef\xbb\xbf'):
             xml_content = xml_content[3:]
         root = ET.fromstring(xml_content)
-        for activity in root.xpath('//packagedElement[@uml:type="uml:Activity"]', namespaces=ns):
+        for activity in root.xpath('//packagedElement[@xmi:type="uml:Activity"]', namespaces=ns):
             activity_data = {"id": activity.get(f'{{{ns["xmi"]}}}id'), "name": activity.get('name'), "nodes": [], "flows": []}
             node_tags = ['executableNode', 'decisionNode', 'forkNode', 'joinNode', 'initialNode', 'activityFinalNode', 'OpaqueAction']
             for tag in node_tags:
@@ -380,7 +381,7 @@ def parse_use_case_spec(text_content):
     return parsed_json
 
 # -----------------------------------------------------------------
-# PARSER SPESIFIK (WIREFRAME / SALT)
+# PARSER SPESIFIK (WIREFRAME / SALT) - PERBAIKAN LOGIKA FINAL
 # -----------------------------------------------------------------
 def parse_wireframe_salt(text_content):
     """
@@ -389,32 +390,49 @@ def parse_wireframe_salt(text_content):
     Sesuai dengan Skema JSON Standar Anda (Appendix C.1.7).
     """
     parsed_json = {"artifact_type": "Wireframe", "screen_name": "Unknown Screen", "components": [], "layout_structure": {}}
+    
     patterns = {
         'title': re.compile(r'{\s*"([^"]+)"', re.I),
-        'button': re.compile(r'\[\s*([^\]]+)\s*\]', re.I),
-        'input': re.compile(r'\[\s*(\.{3}|_{3,})\s*\]', re.I),
+        # Input regex: matches [   ], [...] (3+ titik), or [___] (3+ underscore)
+        'input': re.compile(r'\[\s*(\.{3,}|_{3,}|\s*)\s*\]', re.I),
+        # Button regex: matches [Anything Saja]
+        'button': re.compile(r'\[\s*([^\]]+)\s*\]', re.I), 
         'label_input': re.compile(r'"([^"]+)"\s*\[', re.I),
     }
+    
     title_match = patterns['title'].search(text_content)
     if title_match:
         parsed_json["screen_name"] = title_match.group(1).strip()
     
-    for match in patterns['button'].finditer(text_content):
-        # --- PERBAIKAN 3: TYPO 'Grup' ---
-        parsed_json["components"].append({
-            "id": f"btn-{match.start()}",
-            "kind": "Button",
-            "properties": {"text": match.group(1).strip()} # <-- SUDAH DIGANTI DARI 'Grup'
-        })
-        # --- PERBAIKAN 3 SELESAI ---
-        
+    # Perulangan utama: Cek baris per baris
     for i, line in enumerate(text_content.split('\n')):
         line = line.strip()
-        label_match = patterns['label_input'].search(line)
+        
+        # --- PERBAIKAN LOGIKA ---
+        # CEK INPUT DULU (lebih spesifik)
         input_match = patterns['input'].search(line)
         if input_match:
-            component = {"id": f"input-{i}", "kind": "Input", "properties": {"text": "", "placeholder": ""}}
-            if label_match:
-                component["properties"]["text"] = label_match.group(1).strip()
-            parsed_json["components"].append(component)
+            # Cek apakah isi di dalam kurung [...] adalah input (kosong, ..., atau ___)
+            # group(1) akan berisi '...', '___', atau '   ' (spasi)
+            is_input_content = input_match.group(1)
+            
+            # Jika isinya adalah spasi, titik, atau underscore, itu adalah INPUT
+            if is_input_content.strip() == '' or is_input_content.startswith('.') or is_input_content.startswith('_'):
+                component = {"id": f"input-{i}", "kind": "Input", "properties": {"text": "", "placeholder": ""}}
+                label_match = patterns['label_input'].search(line)
+                if label_match:
+                    component["properties"]["text"] = label_match.group(1).strip()
+                parsed_json["components"].append(component)
+                continue # Penting: Lanjut ke baris berikutnya, JANGAN proses sebagai button
+
+        # JIKA BUKAN INPUT, BARU CEK BUTTON (kurang spesifik)
+        button_match = patterns['button'].search(line)
+        if button_match:
+             parsed_json["components"].append({
+                "id": f"btn-{i}",
+                "kind": "Button",
+                "properties": {"text": button_match.group(1).strip()}
+            })
+        # --- PERBAIKAN LOGIKA SELESAI ---
+
     return parsed_json

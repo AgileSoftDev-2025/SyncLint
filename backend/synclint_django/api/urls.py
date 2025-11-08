@@ -1,5 +1,12 @@
 # File: backend/synclint_django/api/urls.py
 
+from .views import (
+    signup_view, login_view, homepage_view, logout_view, profile_page_view,
+    workspace_page_view,
+    workspace_create, workspace_update, workspace_delete,
+    artefak_upload_view,
+    get_artefaks_view  # <-- 1. IMPORT VIEW BARU
+)
 from django.urls import path
 from .views import (
     signup_view, login_view, homepage_view, logout_view, profile_page_view,
@@ -28,4 +35,6 @@ urlpatterns = [
     # --- TAMBAHKAN BARIS INI ---
     # Artefak API endpoint
     path('artefak/upload/', artefak_upload_view, name='artefak_upload'),
+    # API untuk mengambil daftar artefak
+    path('workspace/<int:workspace_id>/artefaks/', get_artefaks_view, name='get_artefaks'),
 ]

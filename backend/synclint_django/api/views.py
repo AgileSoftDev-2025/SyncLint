@@ -8,7 +8,9 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from .forms import CustomSignupForm, CustomLoginForm, WorkspaceForm
-from .models import User, Workspace
+from .models import User, Workspace, Artefak
+from django.core.serializers import serialize
+import json
 
 # =======================================================
 # FUNGSI SIGNUP (SUDAH DIPERBAIKI)
@@ -234,6 +236,44 @@ def artefak_upload_view(request):
                 "filejson_content": artefak.filejson # Mengirim kembali JSON yang sudah diparsing
             }
         }, status=201)
+
+    except Workspace.DoesNotExist:
+        return JsonResponse({"status": "error", "errors": "Workspace tidak ditemukan."}, status=404)
+    except Exception as e:
+        return JsonResponse({"status": "error", "errors": str(e)}, status=500)
+    
+# =======================================================
+# FUNGSI API UNTUK MENGAMBIL DAFTAR ARTEFAK (BARU)
+# =======================================================
+@login_required
+@require_http_methods(['GET'])
+def get_artefaks_view(request, workspace_id):
+    """
+    Mengambil semua artefak yang terkait dengan workspace tertentu.
+    """
+    try:
+        # 1. Pastikan workspace ini milik user yang sedang login
+        workspace = get_object_or_404(Workspace, id=workspace_id, user=request.user)
+        
+        # --- TAMBAHKAN BARIS INI ---
+        artefaks_query = Artefak.objects.filter(workspace=workspace)
+        # --- SELESAI ---
+        
+        # 2. Ambil semua artefak yang terhubung ke workspace itu
+        artefaks_list = []
+        for artefak in artefaks_query: # <-- Sekarang ini akan berhasil
+            artefaks_list.append({
+                'id': artefak.id,
+                'name': artefak.name,
+                'type': artefak.type,
+                'file_url': artefak.file.url  # <-- INI TAMBAHAN PENTING
+            })
+        
+        # 3. Kirim sebagai JSON
+        return JsonResponse({
+            'status': 'success',
+            'artefaks': artefaks_list # Kirim list yang baru
+        })
 
     except Workspace.DoesNotExist:
         return JsonResponse({"status": "error", "errors": "Workspace tidak ditemukan."}, status=404)
