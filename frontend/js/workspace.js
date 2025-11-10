@@ -46,6 +46,58 @@ document.addEventListener("DOMContentLoaded", () => {
     // =============================================
     // =============== EVENT LISTENERS ===============
     // =============================================
+    // Event listener yang diperbarui untuk menangani SEMUA klik di grid artefak
+    artifactsGrid.addEventListener('click', (e) => {
+        const menuBtn = e.target.closest('.artifact-menu-btn');
+        const actionBtn = e.target.closest('.artifact-action-btn');
+
+        // KASUS 1: Pengguna mengklik tombol tiga titik
+        if (menuBtn) {
+            e.stopPropagation(); // Hentikan event agar tidak ditangkap 'window'
+            const dropdown = menuBtn.nextElementSibling;
+            
+            // Cek apakah dropdown ini sudah terbuka
+            const isAlreadyOpen = dropdown.style.display === 'block';
+
+            // Tutup semua dropdown lain
+            document.querySelectorAll('.artifact-menu-dropdown').forEach(d => {
+                d.style.display = 'none';
+            });
+            
+            // Buka dropdown yang ini (jika tadinya tertutup)
+            if (!isAlreadyOpen) {
+                dropdown.style.display = 'block';
+            }
+            return; 
+        }
+
+        // KASUS 2: Pengguna mengklik aksi (Rename, Delete, Download)
+        if (actionBtn) {
+            e.preventDefault(); // Hentikan <a href="#">
+            
+            const action = actionBtn.dataset.action;
+            const card = actionBtn.closest('.artifact-card');
+            const artefakId = card.dataset.id;
+            const artefakName = card.dataset.name;
+
+            if (action === 'rename') {
+                handleRename(artefakId, artefakName);
+            } else if (action === 'delete') {
+                handleDelete(artefakId, artefakName);
+            }
+            // 'download' sudah ditangani oleh tag <a> HTML
+        }
+    });
+
+    // Menutup menu jika mengklik di luar
+    window.addEventListener('click', (e) => {
+        // Jika yang diklik bukan tombol menu, tutup semua menu
+        if (!e.target.closest('.artifact-menu-btn')) {
+            document.querySelectorAll('.artifact-menu-dropdown').forEach(d => {
+                d.style.display = 'none';
+            });
+        }
+    });
     
     if (selectBtn) {
         selectBtn.addEventListener('click', toggleArtifactSelection);
@@ -112,23 +164,37 @@ document.addEventListener("DOMContentLoaded", () => {
         artifacts.forEach((artifact, index) => {
             const card = document.createElement('div');
             card.className = 'artifact-card';
-            // Gunakan 'artifact.type' (dari API)
-            const icon = getIconForType(artifact.type); 
+            // Simpan data di kartu untuk digunakan oleh event listener
+            card.dataset.id = artifact.id;
+            card.dataset.name = artifact.name;
+
+            const icon = getIconForType(artifact.type);
             const checkboxHTML = isSelectingArtifacts ? `<input type="checkbox" class="artifact-checkbox" data-id="${artifact.id}">` : '';
 
-            // Buat link download
-            const downloadLink = `
-                <a href="${artifact.file_url}" download="${artifact.name}" class="artifact-download-link">
-                    <div class="icon-wrapper">
-                        <div class="icon-placeholder">${icon}</div>
-                        <i class="fas fa-download download-icon"></i> </div>
-                    <p>${artifact.name}</p>
-                </a>
-            `;
-
+            // Struktur HTML baru untuk kartu
             card.innerHTML = `
                 ${checkboxHTML}
-                ${downloadLink}
+
+                <button class="artifact-menu-btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+
+                <div class="artifact-menu-dropdown" style="display: none;">
+                    <a href="${artifact.file_url}" download="${artifact.name}" class="artifact-action-btn">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                    <a href="#" class="artifact-action-btn" data-action="rename">
+                        <i class="fas fa-edit"></i> Rename
+                    </a>
+                    <a href="#" class="artifact-action-btn" data-action="delete">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </div>
+
+                <div class="icon-wrapper">
+                    <div class="icon-placeholder">${icon}</div>
+                </div>
+                <p>${artifact.name}</p>
             `;
             artifactsGrid.appendChild(card);
         });
@@ -271,6 +337,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /**
+     * (FUNGSI BARU) Menangani logika Hapus Artefak
+     */
+    async function handleDelete(artefakId, artefakName) {
+        // Minta konfirmasi
+        if (!confirm(`Apakah Anda yakin ingin menghapus artefak "${artefakName}"?\n\nTindakan ini tidak dapat dibatalkan.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/artefak/${artefakId}/delete/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                alert('Artefak berhasil dihapus.');
+                fetchArtifacts(); // Refresh grid artefak
+            } else {
+                const data = await response.json();
+                alert(`Gagal menghapus artefak: ${data.errors}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan jaringan.');
+        }
+    }
+
+    /**
+     * (FUNGSI BARU) Menangani logika Ubah Nama (Rename) Artefak
+     */
+    async function handleRename(artefakId, oldName) {
+        const newName = prompt('Masukkan nama artefak baru:', oldName);
+
+        // Jika user membatalkan (null) atau tidak mengubah apa-apa
+        if (newName === null || newName.trim() === '' || newName === oldName) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/artefak/${artefakId}/update/`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: newName.trim() })
+            });
+
+            if (response.ok) {
+                alert('Nama artefak berhasil diubah.');
+                fetchArtifacts(); // Refresh grid artefak
+            } else {
+                const data = await response.json();
+                alert(`Gagal mengubah nama: ${data.errors}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan jaringan.');
+        }
+    }
 
     /**
      * (DIPERBARUI) Mengembalikan ikon berdasarkan TIPE API

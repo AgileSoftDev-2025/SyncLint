@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'api',
     'engine',
     'profiles',
-    'synclint_django',
+    #'synclint_django',
+    'behave_django',
 ]
 
 MIDDLEWARE = [
@@ -178,3 +179,6 @@ REST_FRAMEWORK = {
 # Pengaturan untuk file yang di-upload pengguna (Media)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+TEST_RUNNER = 'behave_django.management.commands.behave_test_runner.BehaviorDrivenTestRunner'
+BEHAVE_FEATURES_DIR = os.path.join(BASE_DIR, 'api/features')

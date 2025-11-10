@@ -152,11 +152,7 @@ body {
     transform: translateY(-5px);
 }
 
-.artifact-card .icon-placeholder {
-    font-size: 40px;
-    margin-bottom: 8px;
-    color: var(--dark-text);
-}
+
 
 .artifact-card .artifact-checkbox {
     appearance: none;      /* hilangkan default checkbox */
@@ -499,14 +495,6 @@ body {
 /*
  * PERBAIKAN UNTUK LINK DOWNLOAD ARTEFAK
  */
-.artifact-download-link {
-    text-decoration: none;  /* Hapus garis bawah */
-    color: inherit;         /* Gunakan warna teks normal (tidak biru) */
-    display: flex;          /* Jaga layout flex */
-    flex-direction: column; /* Jaga layout tumpuk (ikon di atas teks) */
-    align-items: center;    /* Jaga agar tetap di tengah */
-    gap: 8px;               /* Jaga jarak antara ikon dan teks */
-}
 
 .artifact-card {
     /* Pastikan padding ada di kartu, bukan di link */
@@ -516,29 +504,6 @@ body {
 /*
  * Gaya untuk Wrapper Ikon dan Ikon Download
  */
-.icon-wrapper {
-    position: relative; /* Penting untuk memposisikan ikon download */
-    width: 60px; /* Sesuaikan dengan ukuran ikon placeholder Anda */
-    height: 60px; /* Sesuaikan dengan ukuran ikon placeholder Anda */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 8px; /* Jarak antara ikon dan teks nama artefak */
-}
-
-.download-icon {
-    position: absolute;
-    bottom: -5px; /* Sesuaikan posisi vertikal */
-    right: -5px; /* Sesuaikan posisi horizontal */
-    font-size: 14px; /* Ukuran ikon download */
-    color: #6a0dad; /* Warna ikon download (misalnya, ungu) */
-    background-color: white; /* Latar belakang agar ikon lebih menonjol */
-    border-radius: 50%; /* Membuatnya bulat */
-    padding: 3px; /* Sedikit padding di sekitar ikon */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Sedikit bayangan */
-    z-index: 10; /* Pastikan di atas ikon utama */
-}
-
 /* Sesuaikan ukuran ikon utama agar tidak terlalu besar di dalam wrapper */
 .icon-placeholder {
     font-size: 40px; /* Contoh ukuran, sesuaikan */
@@ -547,4 +512,104 @@ body {
     align-items: center;
     width: 100%; /* Agar memenuhi wrapper */
     height: 100%; /* Agar memenuhi wrapper */
+}
+
+.artifact-card {
+    position: relative; /* Penting untuk posisi dropdown */
+    padding: 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-placeholder {
+    font-size: 40px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+.artifact-card p {
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    word-break: break-word;
+    margin: 0;
+}
+
+/* Tombol Tiga Titik */
+.artifact-menu-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.artifact-menu-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Dropdown Menu */
+.artifact-menu-dropdown {
+    display: none; /* Dikelola oleh JS */
+    position: absolute;
+    top: 40px; /* Tepat di bawah tombol */
+    right: 8px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    width: 150px; /* Lebar menu */
+    overflow: hidden;
+}
+
+.artifact-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.artifact-action-btn:hover {
+    background-color: #f9f9f9;
+}
+
+/* Ikon di dalam menu */
+.artifact-action-btn i.fas {
+    width: 16px; /* Memberi ruang untuk ikon */
+    text-align: center;
+    color: #666;
+}
+
+/* Beri warna khusus untuk 'Delete' */
+.artifact-action-btn[data-action="delete"] {
+    color: #E53935; /* Merah */
+}
+.artifact-action-btn[data-action="delete"] i.fas {
+    color: #E53935; /* Merah */
 }

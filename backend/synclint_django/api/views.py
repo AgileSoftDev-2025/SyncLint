@@ -279,3 +279,65 @@ def get_artefaks_view(request, workspace_id):
         return JsonResponse({"status": "error", "errors": "Workspace tidak ditemukan."}, status=404)
     except Exception as e:
         return JsonResponse({"status": "error", "errors": str(e)}, status=500)
+# =======================================================
+# FUNGSI API UNTUK MENGUBAH NAMA (RENAME) ARTEFAK
+# =======================================================
+@login_required
+@require_http_methods(['PATCH']) # PATCH digunakan untuk update sebagian
+def artefak_update_view(request, artefak_id):
+    """
+    Mengubah nama (rename) artefak yang ada.
+    """
+    try:
+        # 1. Ambil data JSON dari body request
+        data = json.loads(request.body)
+        new_name = data.get('name')
+
+        if not new_name:
+            return JsonResponse({"status": "error", "errors": "Nama baru tidak boleh kosong."}, status=400)
+
+        # 2. Ambil artefak, pastikan pemiliknya adalah user yang login
+        artefak = get_object_or_404(Artefak, id=artefak_id, workspace__user=request.user)
+        
+        # 3. Ubah nama dan simpan
+        artefak.name = new_name
+        artefak.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'artefak': {
+                'id': artefak.id,
+                'name': artefak.name
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "errors": str(e)}, status=500)
+
+# =======================================================
+# FUNGSI API UNTUK MENGHAPUS (DELETE) ARTEFAK
+# =======================================================
+@login_required
+@require_http_methods(['DELETE'])
+def artefak_delete_view(request, artefak_id):
+    """
+    Menghapus artefak yang ada.
+    """
+    try:
+        # 1. Ambil artefak, pastikan pemiliknya adalah user yang login
+        artefak = get_object_or_404(Artefak, id=artefak_id, workspace__user=request.user)
+        
+        # 2. Hapus file fisiknya (opsional tapi bagus)
+        if artefak.file:
+            artefak.file.delete()
+        if artefak.filejson:
+            # (Jika filejson adalah FileField, Anda juga bisa menghapusnya)
+            pass
+            
+        # 3. Hapus objek dari database
+        artefak.delete()
+        
+        return JsonResponse({'status': 'success', 'message': 'Artefak berhasil dihapus.'})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "errors": str(e)}, status=500)
