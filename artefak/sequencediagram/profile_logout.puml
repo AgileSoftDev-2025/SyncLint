@@ -1,0 +1,27 @@
+@startuml
+title Sequence Diagram - Kelola Profil & Logout
+
+actor User
+boundary UI
+control Controller
+entity Database
+
+User -> UI : Buka halaman Profil
+UI -> Controller : Request data profil
+Controller -> Database : SELECT * FROM User WHERE user_id = ?
+Database --> Controller : Data profil
+Controller --> UI : Tampilkan profil
+
+User -> UI : Ubah data profil (nama, foto, cover)
+UI -> Controller : Kirim perubahan
+Controller -> Database : UPDATE User SET ...
+Database --> Controller : OK
+Controller --> UI : Notifikasi "Profil berhasil diperbarui"
+
+User -> UI : Klik Logout
+UI -> Controller : Request logout
+Controller -> Database : UPDATE Session SET status='logout'
+Database --> Controller : OK
+Controller --> UI : Redirect ke halaman login
+
+@enduml

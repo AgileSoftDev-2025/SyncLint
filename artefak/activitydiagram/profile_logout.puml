@@ -1,0 +1,28 @@
+@startuml
+title Activity Diagram - Profile Page & Logout
+
+start
+:User membuka halaman profil;
+:Sistem menampilkan data profil;
+
+partition "Kelola Profil" {
+  :User ubah foto profil / cover;
+  :User mengubah data profil;
+  :User isi change password dan confirm password;
+  :User klik tombol "Update Profile";
+  if (Validasi data benar?) then (Ya)
+    :Sistem menyimpan perubahan;
+    :Tampilkan notifikasi "Profile updated successfully";
+  else (Tidak)
+    :Tampilkan pesan error;
+  endif
+}
+
+partition "Logout" {
+  :User klik tombol Logout;
+  :Sistem menghapus sesi user;
+  :Sistem mengarahkan ke halaman login;
+}
+
+stop
+@enduml

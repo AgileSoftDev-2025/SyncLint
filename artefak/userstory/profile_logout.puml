@@ -1,0 +1,53 @@
+@startuml
+title User Story - Kelola Profil & Logout
+
+note as US1
+**User Story 1 - Kelola Profil**
+Sebagai pengguna,
+Saya ingin dapat mengelola profil saya
+Agar saya bisa memperbarui informasi, foto, cover, dan kata sandi sesuai kebutuhan.
+end note
+
+note as US2
+**User Story 2 - Logout**
+Sebagai pengguna,
+Saya ingin dapat logout dari aplikasi
+Agar akun saya tetap aman dan tidak diakses orang lain.
+end note
+
+note as US3
+**User Story 3 - Ubah Foto Profil**
+Sebagai pengguna,
+Saya ingin dapat mengubah foto profil saya
+Agar identitas saya di aplikasi tetap terlihat sesuai keinginan.
+end note
+
+note as US4
+**User Story 4 - Ubah Cover**
+Sebagai pengguna,
+Saya ingin mengganti cover profil saya
+Agar tampilan profil lebih menarik dan personal.
+end note
+
+note as US5
+**User Story 5 - Ubah Data Profil**
+Sebagai pengguna,
+Saya ingin memperbarui data profil (nama, bio, email, dll)
+Agar informasi saya selalu akurat dan terbaru.
+end note
+
+note as US6
+**User Story 6 - Update Data Profil**
+Sebagai pengguna,
+Saya ingin setiap perubahan pada profil langsung disimpan ke sistem
+Agar data saya tidak hilang ketika keluar dari halaman.
+end note
+
+note as US7
+**User Story 7 - Ganti Password**
+Sebagai pengguna,
+Saya ingin dapat mengganti kata sandi akun saya
+Agar keamanan akun tetap terjaga.
+end note
+
+@enduml

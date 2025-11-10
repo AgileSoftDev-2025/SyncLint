@@ -1,0 +1,13 @@
+@startuml
+title Use Case Specification - Kelola Profil & Logout
+
+|= Use Case |= Deskripsi |= Aktor |= Preconditions |= Postconditions |
+| Kelola Profil | Menampilkan halaman profil dan opsi pengelolaan profil | Pengguna | Pengguna sudah login | Profil ditampilkan dengan data pengguna |
+| Ubah Foto Profil | Mengunggah dan memperbarui foto profil pengguna | Pengguna | Pengguna membuka halaman profil | Foto profil berhasil diperbarui |
+| Ubah Cover | Mengunggah gambar cover baru untuk halaman profil | Pengguna | Pengguna membuka halaman profil | Cover profil diperbarui |
+| Ubah Data Profil | Mengubah data pribadi seperti nama, bio, email | Pengguna | Pengguna berada di halaman edit profil | Data disimpan dan diperbarui |
+| Update Data Profil | Menyimpan perubahan profil ke database | Pengguna | Pengguna telah mengubah data profil | Data baru tersimpan di database |
+| Ganti Password | Mengubah kata sandi akun pengguna | Pengguna | Pengguna mengetahui password lama | Password baru tersimpan |
+| Logout | Mengakhiri sesi pengguna dan keluar dari aplikasi | Pengguna | Pengguna dalam keadaan login | Sesi pengguna dihapus |
+
+@enduml

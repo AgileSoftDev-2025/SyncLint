@@ -1,0 +1,13 @@
+@startuml
+title User Story Scenario - Kelola Profil & Logout
+
+|= No |= Use Case |= Skenario |= Langkah-Langkah |= Hasil yang Diharapkan |
+| 1 | Ubah Foto Profil | Pengguna ingin mengganti foto profil | 1. Pengguna membuka halaman profil<br>2. Klik "Ubah Foto Profil"<br>3. Pilih gambar baru<br>4. Simpan perubahan | Foto profil berhasil diperbarui |
+| 2 | Ubah Cover | Pengguna ingin mengganti cover profil | 1. Pengguna membuka halaman profil<br>2. Klik "Ubah Cover"<br>3. Pilih gambar baru<br>4. Simpan perubahan | Cover profil berhasil diperbarui |
+| 3 | Ubah Data Profil | Pengguna ingin memperbarui informasi profil | 1. Pengguna membuka halaman edit profil<br>2. Mengubah data seperti nama, bio, email<br>3. Klik simpan | Data profil diperbarui di database |
+| 4 | Update Data Profil | Sistem menyimpan perubahan profil | 1. Pengguna klik "Simpan"<br>2. Sistem memvalidasi data<br>3. Sistem mengupdate tabel user | Perubahan tersimpan di database |
+| 5 | Ganti Password | Pengguna ingin mengganti password lama | 1. Pengguna buka menu "Ganti Password"<br>2. Masukkan password lama dan baru<br>3. Klik "Simpan" | Password berhasil diubah |
+| 6 | Kelola Profil | Pengguna ingin melihat halaman profil lengkap | 1. Pengguna login<br>2. Klik menu “Profil”<br>3. Sistem menampilkan detail profil | Halaman profil tampil sesuai data pengguna |
+| 7 | Logout | Pengguna ingin keluar dari aplikasi | 1. Pengguna klik tombol logout<br>2. Sistem menghapus sesi login<br>3. Aplikasi kembali ke halaman login | Pengguna keluar dari sistem |
+
+@enduml

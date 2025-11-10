@@ -1,0 +1,41 @@
+@startuml
+title Database Dummy - Kelola Profil & Logout
+
+entity "User" as user {
+  * user_id : INT <<PK>>
+  --
+  first_name : VARCHAR(100)
+  last_name : VARCHAR(100)
+  email : VARCHAR(150) <<UNIQUE>>
+  phone : VARCHAR(20)
+  city : VARCHAR(100)
+  country : VARCHAR(100)
+  password_hash : VARCHAR(255)
+  profile_picture : VARCHAR(255)
+  cover_image : VARCHAR(255)
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "Session" as session {
+  * session_id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  login_time : DATETIME
+  logout_time : DATETIME
+  token : VARCHAR(255)
+  status : ENUM('ACTIVE', 'INACTIVE')
+}
+
+entity "Password_History" as password_history {
+  * history_id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  old_password_hash : VARCHAR(255)
+  changed_at : DATETIME
+}
+
+user ||--o{ session : "memiliki"
+user ||--o{ password_history : "mencatat perubahan password"
+
+@enduml

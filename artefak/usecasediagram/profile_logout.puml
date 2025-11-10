@@ -1,0 +1,23 @@
+@startuml
+left to right direction
+actor "Pengguna" as User
+
+package "Kelola Profile" {
+  usecase "Kelola Profil" as UC1
+  usecase "Logout" as UC2
+  usecase "Ubah Foto Profil" as UC3
+  usecase "Ubah Cover" as UC4
+  usecase "Ubah Data Profil" as UC5
+  usecase "Update Data Profil" as UC6
+  usecase "Ganti Password" as UC7
+}
+
+User --> UC1
+User --> UC2
+UC1 --> UC3 : <<include>>
+UC1 --> UC4 : <<include>>
+UC1 --> UC5 : <<include>>
+UC5 --> UC6 : <<extend>>
+UC1 --> UC7 : <<include>>
+
+@enduml

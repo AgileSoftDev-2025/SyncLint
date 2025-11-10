@@ -1,0 +1,25 @@
+@startuml
+title Class Diagram (Dummy DB) - Kelola Profil & Logout
+
+class User {
+  + user_id : UUID
+  + username : String
+  + email : String
+  + password : String
+  + bio : String
+  + profile_picture : String
+  + cover_photo : String
+  + last_login : DateTime
+}
+
+class Session {
+  + session_id : UUID
+  + user_id : UUID
+  + login_time : DateTime
+  + logout_time : DateTime
+  + status : String
+}
+
+User "1" -- "0..*" Session : memiliki >
+
+@enduml
