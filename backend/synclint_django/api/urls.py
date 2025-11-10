@@ -40,3 +40,8 @@ urlpatterns = [
     path('artefak/<int:artefak_id>/update/', artefak_update_view, name='artefak_update'),
     path('artefak/<int:artefak_id>/delete/', artefak_delete_view, name='artefak_delete'),
 ]
+from api.views import ArtefakUploadAPIView
+
+urlpatterns += [
+    path("artefak/upload/", ArtefakUploadAPIView.as_view(), name="api-artefak-upload"),
+]

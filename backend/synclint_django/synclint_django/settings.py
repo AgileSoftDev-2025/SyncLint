@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'api',
     'engine',
     'profiles',
-    #'synclint_django',
+    'synclint_django',
     'behave_django',
 ]
 

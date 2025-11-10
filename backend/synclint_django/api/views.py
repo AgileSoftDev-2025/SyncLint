@@ -341,3 +341,43 @@ def artefak_delete_view(request, artefak_id):
 
     except Exception as e:
         return JsonResponse({"status": "error", "errors": str(e)}, status=500)
+    
+# =======================================================
+# ENDPOINT DRF KHUSUS UNTUK BDD TESTING
+# =======================================================
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+
+class ArtefakUploadAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        file = request.FILES.get("file")
+        name = request.data.get("name")
+        tipe = request.data.get("type")
+        workspace_id = request.data.get("workspace_id")
+
+        if not all([file, name, tipe, workspace_id]):
+            return Response({"status": "error",
+                             "errors": "Data tidak lengkap (file, name, type, workspace_id dibutuhkan)."},
+                            status=400)
+
+        try:
+            workspace = Workspace.objects.get(id=workspace_id, user=request.user)
+        except Workspace.DoesNotExist:
+            return Response({"status": "error", "errors": "Workspace tidak ditemukan"}, status=404)
+
+        # Simpan Artefak tanpa parsing engine (mock)
+        artefak = Artefak.objects.create(
+            name=name,
+            type=tipe,
+            file=file,
+            workspace=workspace,
+            filejson={"artifact_type": tipe, "tables": []}
+        )
+
+        return Response({"status": "success"}, status=201)
